@@ -9,8 +9,8 @@ import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.qbix.pm.server.beans.MongoBean;
 import org.qbix.pm.server.model.Ent;
-import org.qbix.pm.server.mongo.MongoBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

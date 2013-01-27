@@ -16,8 +16,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.qbix.pm.server.annotaions.Traceble;
 import org.qbix.pm.server.beans.AbstractBean;
+import org.qbix.pm.server.beans.MongoBean;
 import org.qbix.pm.server.model.Ent;
-import org.qbix.pm.server.mongo.MongoBean;
 
 @Stateless
 @Traceble

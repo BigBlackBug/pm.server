@@ -1,4 +1,4 @@
-package org.qbix.pm.server.mongo;
+package org.qbix.pm.server.beans;
 
 import java.util.List;
 
@@ -7,7 +7,6 @@ import javax.ejb.Startup;
 import javax.ejb.Stateless;
 
 import org.qbix.pm.server.annotaions.Traceble;
-import org.qbix.pm.server.beans.AbstractBean;
 import org.qbix.pm.server.util.SpringConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

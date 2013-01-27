@@ -10,7 +10,7 @@ import javax.ejb.Startup;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.qbix.pm.server.mongo.MongoBean;
+import org.qbix.pm.server.beans.MongoBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
