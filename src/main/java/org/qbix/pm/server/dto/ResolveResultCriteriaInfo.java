@@ -5,32 +5,33 @@ import java.util.Map;
 
 import org.qbix.pm.server.model.ResolveResultCriteria;
 
-//json obj
-public class ResolveResultCriteriaInfo extends AbstractInfo<ResolveResultCriteria> {
+//json
+public class ResolveResultCriteriaInfo extends
+		AbstractInfo<ResolveResultCriteria> {
 
 	private static final long serialVersionUID = 2549283300751914989L;
 
 	/** resolver id */
 	public Long resolver = 0L;
-	
+
 	public Map<String, String> params = new HashMap<String, String>();
-	
-	public void setResolverId(Long resolverId) {
-		this.resolver = resolverId;
+
+	public void setResolver(Long resolver) {
+		this.resolver = resolver;
 	}
-	
-	public Long getResolverId() {
+
+	public Long getResolver() {
 		return resolver;
 	}
 
-	public void setParameters(Map<String, String> parameters) {
-		this.params = parameters;
+	public void setParams(Map<String, String> params) {
+		this.params = params;
 	}
 
-	public Map<String, String> getParameters() {
+	public Map<String, String> getParams() {
 		return params;
 	}
-	
+
 	@Override
 	public ResolveResultCriteria convertToEntity() {
 		// TODO Auto-generated method stub

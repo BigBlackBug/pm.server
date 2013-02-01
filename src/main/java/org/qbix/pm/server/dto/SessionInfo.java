@@ -3,6 +3,25 @@ package org.qbix.pm.server.dto;
 import org.qbix.pm.server.model.Session;
 
 //json obj
+//json obj
+/**
+* <code>
+* {
+	"sessid" : 1,
+	
+	"pv" :  {
+			"validator" : 2,
+			"params" : { "key1" : "asd" , "key2" : "sdf"}
+		},
+	
+	"rrc" : {
+			"resolver" : 333,
+			"params" : {"k1" : "ololo", "k2" : "trololo" }
+		}
+	} </code>
+* 
+* 
+*/
 public class SessionInfo extends AbstractInfo<Session> {
 
 	private static final long serialVersionUID = 3478578098981496431L;
@@ -16,35 +35,28 @@ public class SessionInfo extends AbstractInfo<Session> {
 	public SessionInfo() {
 	}
 
-	public void setSessionId(Long sessionId) {
-		this.sessid = sessionId;
+	public void setSessid(Long sessid) {
+		this.sessid = sessid;
 	}
-
-	public Long getSessionId() {
+	
+	public Long getSessid() {
 		return sessid;
 	}
-
-	public void setPlayerValidation(PlayerValidationInfo playerValidation) {
-		this.pv = playerValidation;
+	
+	public void setPv(PlayerValidationInfo pv) {
+		this.pv = pv;
 	}
-
-	public PlayerValidationInfo getPlayerValidation() {
+	
+	public PlayerValidationInfo getPv() {
 		return pv;
 	}
-
-	public void setResolveResultCriteria(
-			ResolveResultCriteriaInfo resolveResultCriteria) {
-		this.rrc = resolveResultCriteria;
+	
+	public void setRrc(ResolveResultCriteriaInfo rrc) {
+		this.rrc = rrc;
 	}
-
-	public ResolveResultCriteriaInfo getResolveResultCriteria() {
+	
+	public ResolveResultCriteriaInfo getRrc() {
 		return rrc;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("SESSION id=%d, pv=%s, rrc=%s", sessid,
-				pv, rrc);
 	}
 
 	@Override

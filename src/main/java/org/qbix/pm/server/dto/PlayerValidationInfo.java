@@ -15,19 +15,19 @@ public class PlayerValidationInfo extends AbstractInfo<PlayerValidation> {
 
 	public Map<String, String> params = new HashMap<String, String>();
 
-	public void setValidatorId(Long validatorId) {
-		this.validator = validatorId;
+	public void setValidator(Long validator) {
+		this.validator = validator;
 	}
-
-	public Long getValidatorId() {
+	
+	public Long getValidator() {
 		return validator;
 	}
-
-	public void setParameters(Map<String, String> parameters) {
-		this.params = parameters;
+	
+	public void setParams(Map<String, String> params) {
+		this.params = params;
 	}
-
-	public Map<String, String> getParameters() {
+	
+	public Map<String, String> getParams() {
 		return params;
 	}
 
