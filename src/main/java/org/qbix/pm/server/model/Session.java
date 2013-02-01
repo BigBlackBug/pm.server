@@ -1,10 +1,16 @@
 package org.qbix.pm.server.model;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Version;
 
 @Entity
 public class Session extends AbstractEntity {
@@ -14,21 +20,30 @@ public class Session extends AbstractEntity {
 	@Enumerated(EnumType.STRING)
 	private SessionStatus status = SessionStatus.NOT_EXIST;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	private PlayerValidation playerValidation;
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+	private PlayersValidation playersValidation;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
 	private ResolveResultCriteria resolveResultCriteria;
 
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+	@JoinColumn(name = "session_id")
+	@OrderBy("timestamp")
+	private List<SessionLifeCycleEntry> lifeCycleEntries;
+
+	/** For optimistic locking */
+	@Version
+	private Long version;
+
 	public Session() {
 	}
 
-	public void setPlayerValidation(PlayerValidation playerValidation) {
-		this.playerValidation = playerValidation;
+	public void setPlayersValidation(PlayersValidation playerValidation) {
+		this.playersValidation = playerValidation;
 	}
 
-	public PlayerValidation getPlayerValidation() {
-		return playerValidation;
+	public PlayersValidation getPlayersValidation() {
+		return playersValidation;
 	}
 
 	public void setResolveResultCriteria(
@@ -46,6 +61,22 @@ public class Session extends AbstractEntity {
 
 	public SessionStatus getStatus() {
 		return status;
+	}
+
+	public void setLifeCycleEntries(List<SessionLifeCycleEntry> lifeCycleEntries) {
+		this.lifeCycleEntries = lifeCycleEntries;
+	}
+
+	public List<SessionLifeCycleEntry> getLifeCycleEntries() {
+		return lifeCycleEntries;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Long getVersion() {
+		return version;
 	}
 
 }

@@ -7,7 +7,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 
 @Entity
-public class PlayerValidation extends AbstractEntity {
+public class PlayersValidation extends AbstractEntity {
 	
 	private static final long serialVersionUID = -4732397574586841800L;
 	
@@ -16,7 +16,7 @@ public class PlayerValidation extends AbstractEntity {
 	@ElementCollection
 	public Map<String, String> parameters = new HashMap<String, String>();
 
-	public PlayerValidation() {
+	public PlayersValidation() {
 	}
 	
 	public void setValidatorId(Long validatorId) {

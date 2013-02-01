@@ -1,10 +1,15 @@
 package org.qbix.pm.server.beans;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.qbix.pm.server.annotaions.Traceble;
 import org.qbix.pm.server.dto.SessionInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMException;
+import org.qbix.pm.server.model.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,23 +18,46 @@ import org.slf4j.LoggerFactory;
 public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 		ClientAPI {
 
-	protected Logger log = LoggerFactory.getLogger(SessionFacadeBean.class);
+	private static Logger log = LoggerFactory
+			.getLogger(SessionFacadeBean.class);
+
+	@PersistenceContext(unitName = "pm")
+	private EntityManager em;
+
+	@EJB
+	private ValidationBean validationBean;
+
+	@EJB
+	private SessionLifeCycleBean lifecycleBean;
 
 	@Override
 	public Long registerSession(SessionInfo si) throws PMException {
-		log.info("in registerSession.");
-		log.info(si.toString());
-		return 1L;
+		Session newSession = si.convertToEntity();
+		newSession = validationBean.validateSessionBeforeRegister(newSession);
+		return lifecycleBean.registerSession(newSession);
+	}
+
+	@Override
+	public void startPlayersConfirmation(SessionInfo si) throws PMException {
+		Session sess = si.convertToEntity();
+		sess = validationBean.validateSessionBeforeConfStart(sess);
+		lifecycleBean.startSessionConfirmation(sess);
 	}
 
 	@Override
 	public void confirmParticipation(UserJoinInfo uji) throws PMException {
-		log.info("in confirmParticipation");
+		uji = validationBean.validateUserJoinInfo(uji);
+		lifecycleBean.confirmParticipation(uji);
+	}
+
+	@Override
+	public void cancelParticipation(UserJoinInfo uji) throws PMException {
+		log.info("in cancelParticipation");
 	}
 
 	@Override
 	public void startSession(Long sessId) throws PMException {
-		log.info("in startSessin");
+		// TODO Auto-generated method stub
 	}
 
 }

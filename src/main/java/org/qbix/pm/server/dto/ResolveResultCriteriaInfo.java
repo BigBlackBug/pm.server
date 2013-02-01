@@ -34,8 +34,10 @@ public class ResolveResultCriteriaInfo extends
 
 	@Override
 	public ResolveResultCriteria convertToEntity() {
-		// TODO Auto-generated method stub
-		return null;
+		ResolveResultCriteria criteria = new ResolveResultCriteria();
+		criteria.setResolverId(resolver);
+		criteria.setParameters(params);
+		return criteria;
 	}
 
 }
