@@ -10,24 +10,25 @@ public class ResolveResultCriteriaInfo extends AbstractInfo<ResolveResultCriteri
 
 	private static final long serialVersionUID = 2549283300751914989L;
 
-	public Long resolverId = 0L;
+	/** resolver id */
+	public Long resolver = 0L;
 	
-	public Map<String, String> parameters = new HashMap<String, String>();
+	public Map<String, String> params = new HashMap<String, String>();
 	
 	public void setResolverId(Long resolverId) {
-		this.resolverId = resolverId;
+		this.resolver = resolverId;
 	}
 	
 	public Long getResolverId() {
-		return resolverId;
+		return resolver;
 	}
 
 	public void setParameters(Map<String, String> parameters) {
-		this.parameters = parameters;
+		this.params = parameters;
 	}
 
 	public Map<String, String> getParameters() {
-		return parameters;
+		return params;
 	}
 	
 	@Override
