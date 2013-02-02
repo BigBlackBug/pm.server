@@ -2,12 +2,15 @@ package org.qbix.pm.server.dto;
 
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.SessionStatus;
+import org.qbix.pm.server.util.ParsingUtils;
 
 //json obj
 /**
  * <code>
  * {
 	"sessid" : 1,
+	
+	"type" : "lol",
 	
 	"pv" :  {
 			"validator" : 2,
@@ -27,6 +30,9 @@ public class SessionInfo extends AbstractInfo<Session> {
 
 	private Long sessid;
 
+	/** "LOL" , "HON" */
+	private String type;
+	
 	private PlayersValidationInfo pv;
 
 	private ResolveResultCriteriaInfo rrc;
@@ -44,6 +50,14 @@ public class SessionInfo extends AbstractInfo<Session> {
 
 	public Long getSessid() {
 		return sessid;
+	}
+	
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	public String getType() {
+		return type;
 	}
 
 	public void setPv(PlayersValidationInfo pv) {
@@ -67,6 +81,8 @@ public class SessionInfo extends AbstractInfo<Session> {
 		Session sess = new Session();
 		sess.setId(sessid);
 		sess.setStatus(SessionStatus.NOT_EXIST);
+		sess.setType(ParsingUtils.getSessTypeByString(type));
+		
 		if (pv != null) {
 			sess.setPlayersValidation(pv.convertToEntity());
 		}

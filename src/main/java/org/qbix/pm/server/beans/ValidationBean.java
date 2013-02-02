@@ -7,6 +7,7 @@ import javax.persistence.PersistenceContext;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMValidationException;
 import org.qbix.pm.server.model.Session;
+import org.qbix.pm.server.polling.PollingResult;
 
 /**
  * Validates entities/info. <br>
@@ -31,14 +32,22 @@ public class ValidationBean {
 		}
 	}
 
+	public static void assertTrue(Boolean bool, String mess)
+			throws PMValidationException {
+		if (!bool) {
+			throw new PMValidationException(mess);
+		}
+	}
+
 	@PersistenceContext(unitName = "pm")
 	private EntityManager em;
 
 	public Session validateSessionBeforeRegister(Session sess)
 			throws PMValidationException {
 		notNull(sess, "session = null");
-		notNull(sess.getPlayersValidation(), "playersResolver = null");
-		notNull(sess.getResolveResultCriteria(), "criteria = null");
+		notNull(sess.getPlayersValidation(), "session.playersResolver = null");
+		notNull(sess.getResolveResultCriteria(), "session.criteria = null");
+		notNull(sess.getType(), "session.type = null");
 
 		// TODO playerVal & criteria validations go here ...
 
@@ -80,4 +89,11 @@ public class ValidationBean {
 		return sess;
 	}
 
+	public PollingResult validatePollResiltBeforeAnalyzing(PollingResult pr)
+			throws PMValidationException {
+		notNull(pr);
+		assertTrue(pr.isGameFinished(), "game not finished yet");
+		
+		return pr;
+	}
 }
