@@ -19,14 +19,15 @@ public class ValidationBean {
 
 	public static void notNull(Object obj) throws PMValidationException {
 		if (obj == null) {
-			throw new PMValidationException("Argument can't be null");
+			throw new PMValidationException("Argument can't be null",
+					new NullPointerException());
 		}
 	}
 
 	public static void notNull(Object obj, String mess)
 			throws PMValidationException {
 		if (obj == null) {
-			throw new PMValidationException(mess);
+			throw new PMValidationException(mess, new NullPointerException());
 		}
 	}
 
@@ -51,7 +52,7 @@ public class ValidationBean {
 		notNull(sess.getId(), "session.id = null");
 
 		sess = em.find(Session.class, sess.getId());
-		notNull(sess, "No session with this id");
+		notNull(sess, "No session with id = " + sess.getId());
 
 		return sess;
 	}
@@ -60,8 +61,23 @@ public class ValidationBean {
 			throws PMValidationException {
 		notNull(uji);
 		notNull(uji.getSessid(), "sessid = null");
+
+		Session sess = em.find(Session.class, uji.getSessid());
+		notNull(sess, "No session with id = " + uji.getSessid());
+
 		// TODO ...
 		return uji;
+	}
+
+	public Session validateSessionBeforeStart(Session sess)
+			throws PMValidationException {
+		notNull(sess, "session = null");
+		notNull(sess.getId(), "session.id = null");
+
+		sess = em.find(Session.class, sess.getId());
+		notNull(sess, "No session with id = " + sess.getId());
+
+		return sess;
 	}
 
 }

@@ -19,6 +19,9 @@ public class Session extends AbstractEntity {
 
 	@Enumerated(EnumType.STRING)
 	private SessionStatus status = SessionStatus.NOT_EXIST;
+	
+	@Enumerated(EnumType.STRING)
+	private SessionType type;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
 	private PlayersValidation playersValidation;
@@ -30,7 +33,7 @@ public class Session extends AbstractEntity {
 	@JoinColumn(name = "session_id")
 	@OrderBy("timestamp")
 	private List<SessionLifeCycleEntry> lifeCycleEntries;
-
+	
 	/** For optimistic locking */
 	@Version
 	private Long version;
@@ -61,6 +64,14 @@ public class Session extends AbstractEntity {
 
 	public SessionStatus getStatus() {
 		return status;
+	}
+	
+	public void setType(SessionType type) {
+		this.type = type;
+	}
+	
+	public SessionType getType() {
+		return type;
 	}
 
 	public void setLifeCycleEntries(List<SessionLifeCycleEntry> lifeCycleEntries) {

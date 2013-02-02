@@ -37,4 +37,10 @@ public interface ClientAPI {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void cancelParticipation(UserJoinInfo uji) throws PMException;
 
+	/** if session requires manual start command */
+	@POST
+	@Path("/startsess")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void startSession(SessionInfo si) throws PMException;
+	
 }

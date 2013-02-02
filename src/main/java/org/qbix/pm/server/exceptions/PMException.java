@@ -14,6 +14,10 @@ public class PMException extends Exception {
 	public PMException(String mess) {
 		super(mess);
 	}
+	
+	public PMException(Throwable cause){
+		super(cause);
+	}
 
 	public PMException(String mess, Throwable cause) {
 		super(mess, cause);

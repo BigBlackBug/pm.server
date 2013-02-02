@@ -33,6 +33,10 @@ public class SessionInfo extends AbstractInfo<Session> {
 
 	public SessionInfo() {
 	}
+	
+	public SessionInfo(Long id){
+		sessid = id;
+	}
 
 	public void setSessid(Long sessid) {
 		this.sessid = sessid;

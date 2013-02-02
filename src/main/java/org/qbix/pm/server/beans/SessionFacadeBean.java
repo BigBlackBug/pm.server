@@ -56,8 +56,10 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 	}
 
 	@Override
-	public void startSession(Long sessId) throws PMException {
-		// TODO Auto-generated method stub
+	public void startSession(SessionInfo si) throws PMException {
+		Session sess = si.convertToEntity();
+		sess =  validationBean.validateSessionBeforeStart(sess);
+		lifecycleBean.startSession(sess);
 	}
 
 }

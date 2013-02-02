@@ -1,5 +1,6 @@
 package org.qbix.pm.server.beans;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -8,7 +9,6 @@ import javax.persistence.PersistenceContext;
 
 import org.qbix.pm.server.annotaions.Traceble;
 import org.qbix.pm.server.dto.UserJoinInfo;
-import org.qbix.pm.server.exceptions.PMException;
 import org.qbix.pm.server.exceptions.PMLifecycleException;
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.SessionStatus;
@@ -26,15 +26,15 @@ public class SessionLifeCycleBean extends AbstractBean {
 	@PersistenceContext(unitName = "pm")
 	private EntityManager em;
 
+	@EJB
+	private SessionFacade sessionFacade;
+
 	public void startSessionConfirmation(Session session)
 			throws PMLifecycleException {
-		if (session.getStatus() == SessionStatus.PLAYERS_CONFIRMATION) {
-			// TODO think what to do
-		}
 		session.setStatus(SessionStatus.PLAYERS_CONFIRMATION);
 	}
 
-	public Long registerSession(Session newSession) throws PMException {
+	public Long registerSession(Session newSession) throws PMLifecycleException {
 		newSession.setStatus(SessionStatus.REGISTERED);
 		em.persist(newSession);
 		em.flush();
@@ -44,7 +44,19 @@ public class SessionLifeCycleBean extends AbstractBean {
 		return newSession.getId();
 	}
 
-	public void confirmParticipation(UserJoinInfo uji) throws PMException {
-		//TODO ... updating some entities .. .
+	public void confirmParticipation(UserJoinInfo uji)
+			throws PMLifecycleException {
+
+		//TODO ...
+		/*
+		 * if session is ready to start and doesnt require manual start command
+		 */
+		Session sess = em.find(Session.class, uji.getSessid());
+		startSession(sess);
 	}
+
+	public void startSession(Session sess) throws PMLifecycleException {
+		sess.setStatus(SessionStatus.POLLING);
+	}
+
 }

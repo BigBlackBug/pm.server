@@ -12,6 +12,10 @@ public class PMValidationException extends PMException {
 		super(mess);
 	}
 
+	public PMValidationException(Throwable cause){
+		super(cause);
+	}
+
 	public PMValidationException(String mess, Throwable cause) {
 		super(mess, cause);
 	}

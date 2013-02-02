@@ -12,6 +12,10 @@ public class PMLifecycleException extends PMException {
 		super(mess);
 	}
 
+	public PMLifecycleException(Throwable cause){
+		super(cause);
+	}
+	
 	public PMLifecycleException(String mess, Throwable cause) {
 		super(mess, cause);
 	}
