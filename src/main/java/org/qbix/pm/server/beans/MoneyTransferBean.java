@@ -2,10 +2,10 @@ package org.qbix.pm.server.beans;
 
 import javax.ejb.Stateless;
 
-import org.qbix.pm.server.annotaions.Traceble;
+import org.qbix.pm.server.annotaions.Traceable;
 
 @Stateless
-@Traceble
+@Traceable
 public class MoneyTransferBean extends AbstractBean {
 
 }

@@ -7,7 +7,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.qbix.pm.server.annotaions.Traceble;
+import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMLifecycleException;
 import org.qbix.pm.server.model.Session;
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
-@Traceble
+@Traceable
 public class SessionLifeCycleBean extends AbstractBean {
 
 	private static Logger log = LoggerFactory

@@ -1,11 +1,13 @@
 package org.qbix.pm.server.intercept;
 
+import java.lang.reflect.Method;
+
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
-import org.qbix.pm.server.annotaions.Traceble;
-import org.qbix.pm.server.annotaions.Traceble.LOG_LEVEL;
+import org.qbix.pm.server.annotaions.Traceable;
+import org.qbix.pm.server.annotaions.Traceable.LOG_LEVEL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,14 +20,16 @@ public class TraceInterceptor {
 	public Object intercept(InvocationContext aCtx) throws Exception {
 
 		LOG_LEVEL lglvl = null;
-
-		if (aCtx.getTarget().getClass().isAnnotationPresent(Traceble.class)) {
-			lglvl = aCtx.getTarget().getClass().getAnnotation(Traceble.class)
-					.LOG_LEVEL();
+		Class<?> clazz = aCtx.getTarget().getClass();
+		Traceable annotation = clazz.getAnnotation(Traceable.class);
+		if (annotation != null) {
+			lglvl = annotation.LOG_LEVEL();
 		}
 		
-		if (aCtx.getMethod().isAnnotationPresent(Traceble.class)) {
-			lglvl = aCtx.getMethod().getAnnotation(Traceble.class).LOG_LEVEL();
+		Method method = aCtx.getMethod();
+		annotation = method.getAnnotation(Traceable.class);
+		if (annotation != null) {
+			lglvl = annotation.LOG_LEVEL();
 		}
 		
 		if (lglvl == null) {
@@ -37,8 +41,8 @@ public class TraceInterceptor {
 			return aCtx.proceed();
 		} finally {
 			long diff = System.currentTimeMillis() - before;
-			String mess = aCtx.getTarget().getClass().getSimpleName() + "."
-					+ aCtx.getMethod().getName() + " took " + diff + "ms";
+			String mess = clazz.getSimpleName() + "."
+					+ method.getName() + " took " + diff + "ms";
 
 			switch (lglvl) {
 			case TRACE:

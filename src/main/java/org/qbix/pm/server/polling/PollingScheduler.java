@@ -6,7 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.qbix.pm.server.annotaions.Traceble;
+import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.beans.AbstractBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class PollingScheduler extends AbstractBean {
 	@PersistenceContext(unitName = "pm")
 	private EntityManager em;
 	
-	@Traceble
+	@Traceable
 	@Schedule(dayOfWeek = "*", hour = "*", minute = "*/2", second = "0", persistent = false)
 	public void poll() {
 		log.info("polling started");
