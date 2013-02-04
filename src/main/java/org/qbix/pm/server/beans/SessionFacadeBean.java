@@ -17,8 +17,7 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 @Traceable
-public class SessionFacadeBean extends AbstractBean implements SessionFacade,
-		ClientAPI {
+public class SessionFacadeBean extends AbstractBean implements SessionFacade {
 
 	private static Logger log = LoggerFactory
 			.getLogger(SessionFacadeBean.class);

@@ -50,13 +50,15 @@ public class SessionLifeCycleBean extends AbstractBean {
 		//TODO ...
 		/*
 		 * if session is ready to start and doesnt require manual start command
+		 * 
 		 */
-		Session sess = em.find(Session.class, uji.getSessid());
+		Session sess = em.find(Session.class, uji.getSessionId());
 		startSession(sess);
 	}
 
 	public void startSession(Session sess) throws PMLifecycleException {
 		sess.setStatus(SessionStatus.POLLING);
+		//starting a statful (session) poller
 	}
 
 }

@@ -45,8 +45,8 @@ public class ValidationBean {
 	public Session validateSessionBeforeRegister(Session sess)
 			throws PMValidationException {
 		notNull(sess, "session = null");
-		notNull(sess.getPlayersValidation(), "session.playersResolver = null");
-		notNull(sess.getResolveResultCriteria(), "session.criteria = null");
+		notNull(sess.getPlayerRequirements(), "session.playersResolver = null");
+		notNull(sess.getVictoryCriteria(), "session.criteria = null");
 		notNull(sess.getType(), "session.type = null");
 
 		// TODO playerVal & criteria validations go here ...
@@ -69,10 +69,10 @@ public class ValidationBean {
 	public UserJoinInfo validateUserJoinInfo(UserJoinInfo uji)
 			throws PMValidationException {
 		notNull(uji);
-		notNull(uji.getSessid(), "sessid = null");
+		notNull(uji.getSessionId(), "sessid = null");
 
-		Session sess = em.find(Session.class, uji.getSessid());
-		notNull(sess, "No session with id = " + uji.getSessid());
+		Session sess = em.find(Session.class, uji.getSessionId());
+		notNull(sess, "No session with id = " + uji.getSessionId());
 
 		// TODO ...
 		return uji;
@@ -92,7 +92,7 @@ public class ValidationBean {
 	public PollingResult validatePollResiltBeforeAnalyzing(PollingResult pr)
 			throws PMValidationException {
 		notNull(pr);
-		assertTrue(pr.isGameFinished(), "game not finished yet");
+		assertTrue(pr.isGameFinished(), "game is not finished yet");
 		
 		return pr;
 	}

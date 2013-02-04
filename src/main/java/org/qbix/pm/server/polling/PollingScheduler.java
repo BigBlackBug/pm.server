@@ -1,6 +1,8 @@
 package org.qbix.pm.server.polling;
 
+import javax.annotation.Resource;
 import javax.ejb.Schedule;
+import javax.ejb.SessionContext;
 import javax.ejb.Startup;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
