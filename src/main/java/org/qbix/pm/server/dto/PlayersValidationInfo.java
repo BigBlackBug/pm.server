@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.qbix.pm.server.model.PlayersValidation;
 
+
 //json obj
 public class PlayersValidationInfo extends AbstractInfo<PlayersValidation> {
 
@@ -13,21 +14,21 @@ public class PlayersValidationInfo extends AbstractInfo<PlayersValidation> {
 	/** validator id */
 	public Long validator = 0L;
 
-	public Map<String, String> params = new HashMap<String, String>();
+	public Map<String, Object> params = new HashMap<String, Object>();
 
 	public void setValidator(Long validator) {
 		this.validator = validator;
 	}
-	
+
 	public Long getValidator() {
 		return validator;
 	}
-	
-	public void setParams(Map<String, String> params) {
+
+	public void setParams(Map<String, Object> params) {
 		this.params = params;
 	}
-	
-	public Map<String, String> getParams() {
+
+	public Map<String, Object> getParams() {
 		return params;
 	}
 
@@ -35,7 +36,7 @@ public class PlayersValidationInfo extends AbstractInfo<PlayersValidation> {
 	public PlayersValidation convertToEntity() {
 		PlayersValidation validation = new PlayersValidation();
 		validation.setValidatorId(validator);
-		validation.setParameters(params);
+		validation.setParameters(serializeMapParams(params));
 		return validation;
 	}
 

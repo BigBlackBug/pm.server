@@ -14,7 +14,7 @@ public class ResolveResultCriteriaInfo extends
 	/** resolver id */
 	public Long resolver = 0L;
 
-	public Map<String, String> params = new HashMap<String, String>();
+	public Map<String, Object> params = new HashMap<String, Object>();
 
 	public void setResolver(Long resolver) {
 		this.resolver = resolver;
@@ -24,11 +24,11 @@ public class ResolveResultCriteriaInfo extends
 		return resolver;
 	}
 
-	public void setParams(Map<String, String> params) {
+	public void setParams(Map<String, Object> params) {
 		this.params = params;
 	}
 
-	public Map<String, String> getParams() {
+	public Map<String, Object> getParams() {
 		return params;
 	}
 
@@ -36,7 +36,7 @@ public class ResolveResultCriteriaInfo extends
 	public ResolveResultCriteria convertToEntity() {
 		ResolveResultCriteria criteria = new ResolveResultCriteria();
 		criteria.setResolverId(resolver);
-		criteria.setParameters(params);
+		criteria.setParameters(serializeMapParams(params));
 		return criteria;
 	}
 

@@ -10,7 +10,7 @@ public class ParsingUtils {
 		}
 		s = s.toUpperCase();
 		for(SessionType st : SessionType.values()){
-			if(st.toString().equals(st)){
+			if(st.toString().equals(s)){
 				return st;
 			}
 		}
