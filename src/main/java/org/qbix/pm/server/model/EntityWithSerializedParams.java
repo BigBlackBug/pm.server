@@ -1,29 +1,27 @@
 package org.qbix.pm.server.model;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.persistence.Lob;
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
+import com.google.gson.Gson;
 
 @MappedSuperclass
 public abstract class EntityWithSerializedParams extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Lob
-	protected byte[] parameters;
+	@Column(length = 4096)
+	protected String parameters;
 
 	private transient Map<String, Object> paramsMap;
 
-	public void setParameters(byte[] parameters) {
+	public void setParameters(String parameters) {
 		this.parameters = parameters;
 	}
 
-	public byte[] getParameters() {
+	public String getParameters() {
 		return parameters;
 	}
 
@@ -33,13 +31,7 @@ public abstract class EntityWithSerializedParams extends AbstractEntity {
 		if (paramsMap != null) {
 			return paramsMap;
 		}
-
-		Kryo k = new Kryo(); // TODO is it threadsafe and immutable? if so - use
-								// static Kryo
-		paramsMap = (Map<String, Object>) k.readObject(new Input(
-				getParameters()), LinkedHashMap.class); // TODO specific map
-														// type!
-
+		paramsMap = new Gson().fromJson(parameters, Map.class);
 		return paramsMap;
 	}
 }

@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.qbix.pm.server.model.PlayersValidation;
 
+import com.google.gson.Gson;
+
 
 //json obj
 public class PlayersValidationInfo extends AbstractInfo<PlayersValidation> {
@@ -36,7 +38,7 @@ public class PlayersValidationInfo extends AbstractInfo<PlayersValidation> {
 	public PlayersValidation convertToEntity() {
 		PlayersValidation validation = new PlayersValidation();
 		validation.setValidatorId(validator);
-		validation.setParameters(serializeMapParams(params));
+		validation.setParameters(new Gson().toJson(params));
 		return validation;
 	}
 

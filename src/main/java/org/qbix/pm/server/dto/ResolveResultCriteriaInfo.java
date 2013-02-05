@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.qbix.pm.server.model.ResolveResultCriteria;
 
+import com.google.gson.Gson;
+
 //json
 public class ResolveResultCriteriaInfo extends
 		AbstractInfo<ResolveResultCriteria> {
@@ -36,7 +38,7 @@ public class ResolveResultCriteriaInfo extends
 	public ResolveResultCriteria convertToEntity() {
 		ResolveResultCriteria criteria = new ResolveResultCriteria();
 		criteria.setResolverId(resolver);
-		criteria.setParameters(serializeMapParams(params));
+		criteria.setParameters(new Gson().toJson(params));
 		return criteria;
 	}
 
