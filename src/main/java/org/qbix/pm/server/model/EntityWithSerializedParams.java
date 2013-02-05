@@ -34,9 +34,11 @@ public abstract class EntityWithSerializedParams extends AbstractEntity {
 			return paramsMap;
 		}
 
-		Kryo k = new Kryo();
-		paramsMap = (Map<String, Object>) k.readObject(new Input(parameters),
-				LinkedHashMap.class);
+		Kryo k = new Kryo(); // TODO is it threadsafe and immutable? if so - use
+								// static Kryo
+		paramsMap = (Map<String, Object>) k.readObject(new Input(
+				getParameters()), LinkedHashMap.class); // TODO specific map
+														// type!
 
 		return paramsMap;
 	}
