@@ -38,7 +38,7 @@ public class ResolveResultCriteriaInfo extends
 	public ResolveResultCriteria convertToEntity() {
 		ResolveResultCriteria criteria = new ResolveResultCriteria();
 		criteria.setResolverId(resolver);
-		criteria.setParameters(new Gson().toJson(params));
+		criteria.setJsonParams(new Gson().toJson(params));
 		return criteria;
 	}
 

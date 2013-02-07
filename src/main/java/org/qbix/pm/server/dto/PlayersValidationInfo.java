@@ -38,7 +38,7 @@ public class PlayersValidationInfo extends AbstractInfo<PlayersValidation> {
 	public PlayersValidation convertToEntity() {
 		PlayersValidation validation = new PlayersValidation();
 		validation.setValidatorId(validator);
-		validation.setParameters(new Gson().toJson(params));
+		validation.setJsonParams(new Gson().toJson(params));
 		return validation;
 	}
 
