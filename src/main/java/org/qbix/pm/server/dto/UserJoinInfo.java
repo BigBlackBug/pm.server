@@ -5,23 +5,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 //json obj
+/**join_info : {
+	"session_id" : 2,
+	params : {
+		"account_name" : "bigblackbug", 
+		"invited" : true
+	}
+}**/
 public class UserJoinInfo implements Serializable {
 
 	private static final long serialVersionUID = 7025917910203033553L;
 
-	private Long sessid;
+	private Long sessionId;
 
 	private Map<String, String> params = new HashMap<String, String>();
 
 	public UserJoinInfo() {
 	}
 
-	public void setSessid(Long sessid) {
-		this.sessid = sessid;
+	public void setSessionId(Long sessid) {
+		this.sessionId = sessid;
 	}
 
-	public Long getSessid() {
-		return sessid;
+	public Long getSessionId() {
+		return sessionId;
 	}
 
 	public void setParams(Map<String, String> params) {

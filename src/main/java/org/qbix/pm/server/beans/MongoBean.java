@@ -6,7 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Startup;
 import javax.ejb.Stateless;
 
-import org.qbix.pm.server.annotaions.Traceble;
+import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.util.SpringConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 
 @Stateless
 @Startup
-@Traceble
+@Traceable
 public class MongoBean extends AbstractBean {
 
 	private Logger log = LoggerFactory.getLogger(MongoBean.class);

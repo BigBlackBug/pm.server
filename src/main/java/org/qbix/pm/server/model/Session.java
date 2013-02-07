@@ -26,10 +26,10 @@ public class Session extends AbstractEntity {
 	private SessionType type;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
-	private PlayersValidation playersValidation;
+	private PlayerRequirements playerRequirements;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
-	private ResolveResultCriteria resolveResultCriteria;
+	private VictoryCriteria victoryCriteria;
 
 	@OneToOne(mappedBy = "session")
 	private PollingParams pollingParams;
@@ -39,6 +39,8 @@ public class Session extends AbstractEntity {
 	@OrderBy("timestamp")
 	private List<SessionLifeCycleEntry> lifeCycleEntries;
 
+	@OneToMany
+	private List<PlayerEntry> players;
 	/** For optimistic locking */
 	@Version
 	private Long version;
@@ -46,21 +48,21 @@ public class Session extends AbstractEntity {
 	public Session() {
 	}
 
-	public void setPlayersValidation(PlayersValidation playerValidation) {
-		this.playersValidation = playerValidation;
+	public void setPlayerRequirements(PlayerRequirements playerRequirements) {
+		this.playerRequirements = playerRequirements;
 	}
 
-	public PlayersValidation getPlayersValidation() {
-		return playersValidation;
+	public PlayerRequirements getPlayerRequirements() {
+		return playerRequirements;
 	}
 
-	public void setResolveResultCriteria(
-			ResolveResultCriteria resolveResultCriteria) {
-		this.resolveResultCriteria = resolveResultCriteria;
+	public void setVictoryCriteria(
+			VictoryCriteria victoryCriteria) {
+		this.victoryCriteria = victoryCriteria;
 	}
 
-	public ResolveResultCriteria getResolveResultCriteria() {
-		return resolveResultCriteria;
+	public VictoryCriteria getVictoryCriteria() {
+		return victoryCriteria;
 	}
 
 	public void setStatus(SessionStatus status) {
@@ -103,4 +105,11 @@ public class Session extends AbstractEntity {
 		return version;
 	}
 
+	public List<PlayerEntry> getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(List<PlayerEntry> players) {
+		this.players = players;
+	}
 }

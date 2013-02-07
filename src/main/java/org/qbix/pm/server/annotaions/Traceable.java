@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
-public @interface Traceble {
+public @interface Traceable {
 	
 	LOG_LEVEL LOG_LEVEL() default LOG_LEVEL.DEBUG;
 	 

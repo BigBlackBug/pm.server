@@ -7,7 +7,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.qbix.pm.server.annotaions.Traceble;
+import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMLifecycleException;
 import org.qbix.pm.server.model.Session;
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
-@Traceble
+@Traceable
 public class SessionLifeCycleBean extends AbstractBean {
 
 	private static Logger log = LoggerFactory
@@ -50,13 +50,15 @@ public class SessionLifeCycleBean extends AbstractBean {
 		//TODO ...
 		/*
 		 * if session is ready to start and doesnt require manual start command
+		 * 
 		 */
-		Session sess = em.find(Session.class, uji.getSessid());
+		Session sess = em.find(Session.class, uji.getSessionId());
 		startSession(sess);
 	}
 
 	public void startSession(Session sess) throws PMLifecycleException {
 		sess.setStatus(SessionStatus.POLLING);
+		//starting a statful (session) poller
 	}
 
 }

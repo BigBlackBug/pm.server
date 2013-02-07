@@ -8,19 +8,14 @@ import org.qbix.pm.server.util.ParsingUtils;
 /**
  * <code>
  * {
-	"sessid" : 1,
+	"sess_id" : 1, // i think we don't need session_id here.
 	
-	"type" : "lol",
+	"type" : "hon",
+
+	player_requirements : {},
 	
-	"pv" :  {
-			"validator" : 2,
-			"params" : { "key1" : "asd" , "key2" : "sdf"}
-		},
+	victory_criteria : {}
 	
-	"rrc" : {
-			"resolver" : 333,
-			"params" : {"k1" : "ololo", "k2" : "trololo" }
-		}
 	} </code>
  * 
  */
@@ -28,28 +23,28 @@ public class SessionInfo extends AbstractInfo<Session> {
 
 	private static final long serialVersionUID = 3478578098981496431L;
 
-	private Long sessid;
+	private Long sessionId;
 
 	/** "LOL" , "HON" */
 	private String type;
 	
-	private PlayersValidationInfo pv;
+	private PlayerRequirementsInfo playerRequirements;
 
-	private ResolveResultCriteriaInfo rrc;
+	private VictoryCriteriaInfo victoryCriteria;
 
 	public SessionInfo() {
 	}
 	
 	public SessionInfo(Long id){
-		sessid = id;
+		sessionId = id;
 	}
 
-	public void setSessid(Long sessid) {
-		this.sessid = sessid;
+	public void setSessid(Long sessionId) {
+		this.sessionId = sessionId;
 	}
 
-	public Long getSessid() {
-		return sessid;
+	public Long getSessionId() {
+		return sessionId;
 	}
 	
 	public void setType(String type) {
@@ -60,34 +55,34 @@ public class SessionInfo extends AbstractInfo<Session> {
 		return type;
 	}
 
-	public void setPv(PlayersValidationInfo pv) {
-		this.pv = pv;
+	public void setPlayerRequirements(PlayerRequirementsInfo playerRequirements) {
+		this.playerRequirements = playerRequirements;
 	}
 
-	public PlayersValidationInfo getPv() {
-		return pv;
+	public PlayerRequirementsInfo getPplayerRequirements() {
+		return playerRequirements;
 	}
 
-	public void setRrc(ResolveResultCriteriaInfo rrc) {
-		this.rrc = rrc;
+	public void setVictoryCriteria(VictoryCriteriaInfo vc) {
+		this.victoryCriteria = vc;
 	}
 
-	public ResolveResultCriteriaInfo getRrc() {
-		return rrc;
+	public VictoryCriteriaInfo getVictoryCriteria() {
+		return victoryCriteria;
 	}
 
 	@Override
 	public Session convertToEntity() {
 		Session sess = new Session();
-		sess.setId(sessid);
+		sess.setId(sessionId);
 		sess.setStatus(SessionStatus.NOT_EXIST);
 		sess.setType(ParsingUtils.getSessTypeByString(type));
 		
-		if (pv != null) {
-			sess.setPlayersValidation(pv.convertToEntity());
+		if (playerRequirements != null) {
+			sess.setPlayerRequirements(playerRequirements.convertToEntity());
 		}
-		if (rrc != null) {
-			sess.setResolveResultCriteria(rrc.convertToEntity());
+		if (victoryCriteria != null) {
+			sess.setVictoryCriteria(victoryCriteria.convertToEntity());
 		}
 		return sess;
 	}

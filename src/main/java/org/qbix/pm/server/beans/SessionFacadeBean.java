@@ -5,7 +5,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.qbix.pm.server.annotaions.Traceble;
+import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.dto.SessionInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMException;
@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
-@Traceble
+@Traceable
 public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 		ClientAPI {
 
