@@ -13,30 +13,30 @@ import javax.persistence.Transient;
 import org.qbix.pm.server.model.EntityWithSerializedParams;
 
 @Entity
-public class PollingLogEntry extends EntityWithSerializedParams{
-	
+public class PollingLogEntry extends EntityWithSerializedParams {
+
 	private static final long serialVersionUID = 6929117625215244642L;
 
 	@Transient
 	private transient ReturnCode returnCode;
-	
+
 	@Column(name = "return_code")
 	private int statusCode;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
-	
-	@PrePersist
-    void prePersist(){
-        statusCode = returnCode.getCode();
-    }
 
-    @PostLoad
-    void postLoad(){
-    	returnCode = ReturnCode.valueOf(statusCode);
-    }
-    
-    public ReturnCode getReturnCode() {
+	@PrePersist
+	void prePersist() {
+		statusCode = returnCode.getCode();
+	}
+
+	@PostLoad
+	void postLoad() {
+		returnCode = ReturnCode.valueOf(statusCode);
+	}
+
+	public ReturnCode getReturnCode() {
 		return returnCode;
 	}
 
@@ -51,6 +51,5 @@ public class PollingLogEntry extends EntityWithSerializedParams{
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
-	
-	
+
 }
