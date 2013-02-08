@@ -3,6 +3,7 @@ package org.qbix.pm.server.polling;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -18,6 +19,7 @@ public class PollingResult extends EntityWithSerializedParams {
 	
 	protected boolean gameFinished = false;
 	
+	@OneToOne
 	private Session session;
 
 	@Transient

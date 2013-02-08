@@ -1,6 +1,8 @@
 package org.qbix.pm.server.beans;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -16,6 +18,7 @@ import org.qbix.pm.server.polling.PollingResult;
  * All returning <b>entities</b> - managed !
  */
 @Stateless
+@TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class ValidationBean {
 
 	public static void notNull(Object obj) throws PMValidationException {

@@ -1,12 +1,8 @@
 package org.qbix.pm.server.model.parser;
 
-import java.util.Map;
-import java.util.Objects;
-
 import org.qbix.pm.server.model.SessionTeam;
 import org.qbix.pm.server.model.VictoryCriteria;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class HoNParser extends AbstractParser{

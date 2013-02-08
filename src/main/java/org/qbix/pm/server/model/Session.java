@@ -31,7 +31,7 @@ public class Session extends AbstractEntity {
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
 	private VictoryCriteria victoryCriteria;
 
-	@OneToOne(mappedBy = "session")
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
 	private PollingParams pollingParams;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
@@ -41,6 +41,7 @@ public class Session extends AbstractEntity {
 
 	@OneToMany
 	private List<PlayerEntry> players;
+	
 	/** For optimistic locking */
 	@Version
 	private Long version;

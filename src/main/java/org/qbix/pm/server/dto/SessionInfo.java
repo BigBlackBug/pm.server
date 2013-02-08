@@ -8,13 +8,13 @@ import org.qbix.pm.server.util.ParsingUtils;
 /**
  * <code>
  * {
-	"sess_id" : 1, // i think we don't need session_id here.
+	"sessid" : 1, 
 	
 	"type" : "hon",
 
-	player_requirements : {},
+	"pr" : { "parserId" : 1, "requirements" : { "key1" : "val1" } },
 	
-	victory_criteria : {}
+	"vc" : { "parserId" : 10, "criteria" : { "key1" : 2 } }
 	
 	} </code>
  * 
@@ -23,28 +23,28 @@ public class SessionInfo extends AbstractInfo<Session> {
 
 	private static final long serialVersionUID = 3478578098981496431L;
 
-	private Long sessionId;
+	private Long sessid;
 
 	/** "LOL" , "HON" */
 	private String type;
 	
-	private PlayerRequirementsInfo playerRequirements;
+	private PlayerRequirementsInfo pr;
 
-	private VictoryCriteriaInfo victoryCriteria;
+	private VictoryCriteriaInfo vc;
 
 	public SessionInfo() {
 	}
 	
 	public SessionInfo(Long id){
-		sessionId = id;
+		sessid = id;
 	}
 
 	public void setSessid(Long sessionId) {
-		this.sessionId = sessionId;
+		this.sessid = sessionId;
 	}
 
 	public Long getSessionId() {
-		return sessionId;
+		return sessid;
 	}
 	
 	public void setType(String type) {
@@ -55,34 +55,34 @@ public class SessionInfo extends AbstractInfo<Session> {
 		return type;
 	}
 
-	public void setPlayerRequirements(PlayerRequirementsInfo playerRequirements) {
-		this.playerRequirements = playerRequirements;
+	public void setPr(PlayerRequirementsInfo playerRequirements) {
+		this.pr = playerRequirements;
 	}
 
-	public PlayerRequirementsInfo getPplayerRequirements() {
-		return playerRequirements;
+	public PlayerRequirementsInfo getPr() {
+		return pr;
 	}
 
-	public void setVictoryCriteria(VictoryCriteriaInfo vc) {
-		this.victoryCriteria = vc;
+	public void setVc(VictoryCriteriaInfo vc) {
+		this.vc = vc;
 	}
 
-	public VictoryCriteriaInfo getVictoryCriteria() {
-		return victoryCriteria;
+	public VictoryCriteriaInfo getVc() {
+		return vc;
 	}
 
 	@Override
 	public Session convertToEntity() {
 		Session sess = new Session();
-		sess.setId(sessionId);
+		sess.setId(sessid);
 		sess.setStatus(SessionStatus.NOT_EXIST);
 		sess.setType(ParsingUtils.getSessTypeByString(type));
 		
-		if (playerRequirements != null) {
-			sess.setPlayerRequirements(playerRequirements.convertToEntity());
+		if (pr != null) {
+			sess.setPlayerRequirements(pr.convertToEntity());
 		}
-		if (victoryCriteria != null) {
-			sess.setVictoryCriteria(victoryCriteria.convertToEntity());
+		if (vc != null) {
+			sess.setVictoryCriteria(vc.convertToEntity());
 		}
 		return sess;
 	}

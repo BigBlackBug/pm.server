@@ -12,6 +12,7 @@ import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMLifecycleException;
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.SessionStatus;
+import org.qbix.pm.server.polling.PollingParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,10 +48,9 @@ public class SessionLifeCycleBean extends AbstractBean {
 	public void confirmParticipation(UserJoinInfo uji)
 			throws PMLifecycleException {
 
-		//TODO ...
+		// TODO ...
 		/*
 		 * if session is ready to start and doesnt require manual start command
-		 * 
 		 */
 		Session sess = em.find(Session.class, uji.getSessionId());
 		startSession(sess);
@@ -58,7 +58,15 @@ public class SessionLifeCycleBean extends AbstractBean {
 
 	public void startSession(Session sess) throws PMLifecycleException {
 		sess.setStatus(SessionStatus.POLLING);
-		//starting a statful (session) poller
+		sess.setPollingParams(generatePollingParams(sess));
+	}
+
+	private PollingParams generatePollingParams(Session sess) {
+		PollingParams pp = new PollingParams();
+		pp.setPollerId(1L);
+		pp.setSession(sess);
+		em.persist(pp);
+		return pp;
 	}
 
 }

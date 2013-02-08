@@ -5,13 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 //json obj
-/**join_info : {
-	"session_id" : 2,
-	params : {
-		"account_name" : "bigblackbug", 
-		"invited" : true
-	}
-}**/
 public class UserJoinInfo implements Serializable {
 
 	private static final long serialVersionUID = 7025917910203033553L;

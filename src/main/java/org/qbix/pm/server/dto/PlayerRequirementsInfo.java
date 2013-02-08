@@ -8,13 +8,6 @@ import org.qbix.pm.server.model.PlayerRequirements;
 import com.google.gson.Gson;
 
 //json obj
-//player_requirements : {
-//	"parser_id" : 2,
-//	"requirements" : { 
-//		"rating" : {"$gt" : 1700},
-//		"kdr" : {"$gt" : 1.56}
-//	}
-//}
 public class PlayerRequirementsInfo extends AbstractInfo<PlayerRequirements> {
 
 	private static final long serialVersionUID = -8702727744206697748L;

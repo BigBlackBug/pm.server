@@ -3,7 +3,6 @@ package org.qbix.pm.server.intercept;
 import java.lang.reflect.Method;
 
 import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
 import org.qbix.pm.server.annotaions.Traceable;
@@ -11,7 +10,6 @@ import org.qbix.pm.server.annotaions.Traceable.LOG_LEVEL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Interceptor
 public class TraceInterceptor {
 
 	private Logger log = LoggerFactory.getLogger(TraceInterceptor.class);
