@@ -92,7 +92,7 @@ public class ValidationBean {
 		return sess;
 	}
 
-	public PollingResult validatePollResiltBeforeAnalyzing(PollingResult pr)
+	public PollingResult validatePollResultBeforeAnalyzing(PollingResult pr)
 			throws PMValidationException {
 		notNull(pr);
 		assertTrue(pr.isGameFinished(), "game is not finished yet");
