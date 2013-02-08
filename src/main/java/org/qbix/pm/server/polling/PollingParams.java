@@ -17,6 +17,8 @@ public class PollingParams extends AbstractEntity {
 	@OneToOne
 	private Session session;
 	
+	private long pollerId;
+	
 	@ElementCollection
 	private Map<String, String> mapParams;
 
@@ -26,6 +28,14 @@ public class PollingParams extends AbstractEntity {
 
 	public Session getSession() {
 		return session;
+	}
+	
+	public long getPollerId() {
+		return pollerId;
+	}
+	
+	public void setPollerId(long pollerId) {
+		this.pollerId = pollerId;
 	}
 	
 	public void setMapParams(Map<String, String> mapParams) {

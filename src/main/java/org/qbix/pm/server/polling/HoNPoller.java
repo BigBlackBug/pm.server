@@ -1,38 +1,44 @@
 package org.qbix.pm.server.polling;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.Date;
 
 import org.qbix.pm.server.exceptions.PMPollingException;
 import org.qbix.pm.server.model.SessionTeam;
 import org.qbix.pm.server.model.VictoryCriteria;
 import org.qbix.pm.server.model.parser.AbstractParser;
-import org.qbix.pm.server.model.parser.HonParser;
+import org.qbix.pm.server.util.Cache;
 
 
-public class HoNPoller extends AbstractPoller<DefaultPollingResult, PollingParams>{
+public class HoNPoller extends AbstractPoller<PollingResult, PollingParams>{
+	public static transient final long POLLER_ID = 1L;
 
 	@Override
-	public DefaultPollingResult poll(PollingParams params) throws PMPollingException {
+	public PollingResult poll(PollingParams params) throws PMPollingException {
 		VictoryCriteria victoryCriteria = params.getSession().getVictoryCriteria();
 		Long parserId = victoryCriteria.getParserId();
-		AbstractParser parser = new HonParser();//getById
+		AbstractParser parser = Cache.getVCParser(parserId);
 		
-		Map<String, String> result = getResult();
+		PollingResult ans = new PollingResult();
+		ans.setTimestamp(new Date());
+		ans.setSession(params.getSession());
 		
-		DefaultPollingResult ans = new DefaultPollingResult();
-		if(result.isEmpty()){
+		String json = getJson();
+		ans.setJsonParams(json);
+		
+		ans.setReturnCode(ReturnCode.SUCCESS);//here
+		
+		if(json.isEmpty()){
 			ans.setGameFinished(false);
 		}else{
 			ans.setGameFinished(true);
-			SessionTeam winner = parser.getWinner(result, victoryCriteria);
+			SessionTeam winner = parser.getWinner(json, victoryCriteria);
 			ans.setWinnerTeam(winner);
 		}
 		return ans;
 	}
 	
-	private Map<String,String> getResult(){
-		return Collections.emptyMap();
+	private String getJson(){//FIXME send request
+		return "";
 	}
 
 }
