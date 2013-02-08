@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Version;
 
+import org.qbix.pm.server.polling.PollingLogEntry;
 import org.qbix.pm.server.polling.PollingParams;
 
 @Entity
@@ -39,9 +40,13 @@ public class Session extends AbstractEntity {
 	@OrderBy("timestamp")
 	private List<SessionLifeCycleEntry> lifeCycleEntries;
 
+	@OneToMany(cascade = { CascadeType.REMOVE })
+	@JoinColumn(name = "session_id")
+	private List<PollingLogEntry> pollingLogs;
+
 	@OneToMany
 	private List<PlayerEntry> players;
-	
+
 	/** For optimistic locking */
 	@Version
 	private Long version;
@@ -57,8 +62,7 @@ public class Session extends AbstractEntity {
 		return playerRequirements;
 	}
 
-	public void setVictoryCriteria(
-			VictoryCriteria victoryCriteria) {
+	public void setVictoryCriteria(VictoryCriteria victoryCriteria) {
 		this.victoryCriteria = victoryCriteria;
 	}
 
@@ -112,5 +116,13 @@ public class Session extends AbstractEntity {
 
 	public void setPlayers(List<PlayerEntry> players) {
 		this.players = players;
+	}
+
+	public List<PollingLogEntry> getPollingLogs() {
+		return pollingLogs;
+	}
+
+	public void setPollingLogs(List<PollingLogEntry> pollingLogs) {
+		this.pollingLogs = pollingLogs;
 	}
 }

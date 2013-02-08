@@ -41,11 +41,13 @@ public class PollingBean {
 
 		try {
 			PollingResult result = p.poll(pollingParams);
-
+			result.setSession(session);
+			
 			PollingLogEntry logEntry = new PollingLogEntry();
 			logEntry.setJsonParams(result.getJsonParams());
 			logEntry.setReturnCode(result.getReturnCode());
 			logEntry.setTimestamp(result.getTimestamp());
+			logEntry.setSession(session);
 			em.persist(logEntry);
 
 			if (result.isGameFinished()) {

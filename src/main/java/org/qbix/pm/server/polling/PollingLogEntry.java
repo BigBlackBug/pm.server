@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
@@ -11,6 +12,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.qbix.pm.server.model.EntityWithSerializedParams;
+import org.qbix.pm.server.model.Session;
 
 @Entity
 public class PollingLogEntry extends EntityWithSerializedParams {
@@ -25,6 +27,9 @@ public class PollingLogEntry extends EntityWithSerializedParams {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
+	
+	@ManyToOne
+	private Session session;
 
 	@PrePersist
 	void prePersist() {
@@ -50,6 +55,14 @@ public class PollingLogEntry extends EntityWithSerializedParams {
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	public Session getSession() {
+		return session;
+	}
+	
+	public void setSession(Session session) {
+		this.session = session;
 	}
 
 }
