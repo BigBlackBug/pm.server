@@ -7,6 +7,8 @@ public enum SessionStatus {
 	REGISTERED,
 
 	PLAYERS_CONFIRMATION,
+	
+	READY_FOR_POLLING,
 
 	POLLING,
 

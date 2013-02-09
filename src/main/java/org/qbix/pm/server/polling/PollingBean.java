@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.qbix.pm.server.annotaions.Traceable;
+import org.qbix.pm.server.beans.AbstractBean;
 import org.qbix.pm.server.exceptions.PMPollingException;
 import org.qbix.pm.server.intercept.ResultReadyEvent;
 import org.qbix.pm.server.model.Session;
@@ -19,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 @Asynchronous
-public class PollingBean {
+public class PollingBean extends AbstractBean {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(PollingBean.class);
@@ -28,7 +30,7 @@ public class PollingBean {
 	private EntityManager em;
 
 	@Inject
-	private Event<ResultReadyEvent> resultReady;
+	private Event<ResultReadyEvent> resultReadyEventBus;
 
 	public void poll(Long sessionId) {
 		Session session = em.find(Session.class, sessionId);
@@ -42,7 +44,7 @@ public class PollingBean {
 		try {
 			PollingResult result = p.poll(pollingParams);
 			result.setSession(session);
-			
+
 			PollingLogEntry logEntry = new PollingLogEntry();
 			logEntry.setJsonParams(result.getJsonParams());
 			logEntry.setReturnCode(result.getReturnCode());
@@ -55,7 +57,7 @@ public class PollingBean {
 				em.persist(result);
 				em.flush();
 				em.refresh(result);
-				resultReady.fire(new ResultReadyEvent(result.getId()));
+				resultReadyEventBus.fire(new ResultReadyEvent(result.getId()));
 			}
 
 			log.debug("polling session(id" + session.getId() + ") end");
@@ -66,10 +68,15 @@ public class PollingBean {
 		}
 	}
 
+	@Traceable
 	public void resolveResult(
 			@Observes(during = TransactionPhase.AFTER_SUCCESS) ResultReadyEvent rre) {
-		log.info("resolving result");
 		PollingResult pr = em.find(PollingResult.class, rre.resultId);
+		Session s = pr.getSession();
+
+		log.info(String.format("resolving session(id%s) result", s.getId()));
+
+		//TODO resolving result goes here ...
 		pr.getSession().setStatus(SessionStatus.PREPARING_TO_TRANSFER);
 	}
 }

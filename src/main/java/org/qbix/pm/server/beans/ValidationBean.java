@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMValidationException;
 import org.qbix.pm.server.model.Session;
+import org.qbix.pm.server.model.SessionStatus;
 import org.qbix.pm.server.polling.PollingResult;
 
 /**
@@ -23,15 +24,14 @@ public class ValidationBean {
 
 	public static void notNull(Object obj) throws PMValidationException {
 		if (obj == null) {
-			throw new PMValidationException("Argument can't be null",
-					new NullPointerException());
+			throw new PMValidationException("Argument can't be null");
 		}
 	}
 
 	public static void notNull(Object obj, String mess)
 			throws PMValidationException {
 		if (obj == null) {
-			throw new PMValidationException(mess, new NullPointerException());
+			throw new PMValidationException(mess);
 		}
 	}
 
@@ -72,10 +72,10 @@ public class ValidationBean {
 	public UserJoinInfo validateUserJoinInfo(UserJoinInfo uji)
 			throws PMValidationException {
 		notNull(uji);
-		notNull(uji.getSessionId(), "sessid = null");
+		notNull(uji.getSessid(), "UserJoinInfo.sessid = null");
 
-		Session sess = em.find(Session.class, uji.getSessionId());
-		notNull(sess, "No session with id = " + uji.getSessionId());
+		Session sess = em.find(Session.class, uji.getSessid());
+		notNull(sess, "No session with id = " + uji.getSessid());
 
 		// TODO ...
 		return uji;
@@ -86,8 +86,15 @@ public class ValidationBean {
 		notNull(sess, "session = null");
 		notNull(sess.getId(), "session.id = null");
 
+		Long sessId = sess.getId();
 		sess = em.find(Session.class, sess.getId());
-		notNull(sess, "No session with id = " + sess.getId());
+		notNull(sess, "No session with id = " + sessId);
+
+		if (sess.getStatus() != SessionStatus.READY_FOR_POLLING) {
+			throw new PMValidationException(String.format(
+					"session(id%d) is not in 'READY_FOR_POLLING' status",
+					sess.getId()));
+		}
 
 		return sess;
 	}
@@ -96,7 +103,7 @@ public class ValidationBean {
 			throws PMValidationException {
 		notNull(pr);
 		assertTrue(pr.isGameFinished(), "game is not finished yet");
-		
+
 		return pr;
 	}
 }

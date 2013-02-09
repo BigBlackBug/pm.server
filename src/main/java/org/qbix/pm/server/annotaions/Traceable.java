@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface Traceable {
 	
-	LOG_LEVEL LOG_LEVEL() default LOG_LEVEL.DEBUG;
+	LogLevel logLevel() default LogLevel.DEBUG;
 	 
-	 public static enum LOG_LEVEL {
+	 public static enum LogLevel {
 		 TRACE, DEBUG, INFO, WARN, ERROR;
 	 }
 }

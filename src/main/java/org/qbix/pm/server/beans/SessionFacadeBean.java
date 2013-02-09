@@ -2,6 +2,8 @@ package org.qbix.pm.server.beans;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -16,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 @Traceable
 public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 		ClientAPI {
@@ -60,7 +63,7 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 	@Override
 	public void startSession(SessionInfo si) throws PMException {
 		Session sess = si.convertToEntity();
-		sess =  validationBean.validateSessionBeforeStart(sess);
+		sess = validationBean.validateSessionBeforeStart(sess);
 		lifecycleBean.startSession(sess);
 	}
 
@@ -68,5 +71,5 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 	public void resolveResult(PollingResult pr) throws PMLifecycleException {
 		// TODO Auto-generated method stub
 	}
-	
+
 }

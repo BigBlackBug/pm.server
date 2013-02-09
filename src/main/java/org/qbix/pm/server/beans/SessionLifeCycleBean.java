@@ -4,12 +4,18 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.enterprise.event.TransactionPhase;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.qbix.pm.server.annotaions.Traceable;
+import org.qbix.pm.server.dto.SessionInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;
+import org.qbix.pm.server.exceptions.PMException;
 import org.qbix.pm.server.exceptions.PMLifecycleException;
+import org.qbix.pm.server.intercept.StartSessionEvent;
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.SessionStatus;
 import org.qbix.pm.server.polling.PollingParams;
@@ -18,14 +24,16 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
-@Traceable
-public class SessionLifeCycleBean extends AbstractBean {
+public class SessionLifeCycleBean {
 
 	private static Logger log = LoggerFactory
 			.getLogger(SessionLifeCycleBean.class);
 
 	@PersistenceContext(unitName = "pm")
 	private EntityManager em;
+
+	@Inject
+	private Event<StartSessionEvent> startSessionEventBus;
 
 	@EJB
 	private SessionFacade sessionFacade;
@@ -41,22 +49,25 @@ public class SessionLifeCycleBean extends AbstractBean {
 		em.flush();
 		em.refresh(newSession);
 
-		log.info(String.format("session(id%d) persisted", newSession.getId()));
+		log.info(String.format("session(id%d) registered", newSession.getId()));
 		return newSession.getId();
 	}
 
 	public void confirmParticipation(UserJoinInfo uji)
 			throws PMLifecycleException {
-
-		// TODO ...
+		Session sess = em.find(Session.class, uji.getSessid());
+		sess.setStatus(SessionStatus.READY_FOR_POLLING);
 		/*
 		 * if session is ready to start and doesnt require manual start command
 		 */
-		Session sess = em.find(Session.class, uji.getSessionId());
-		startSession(sess);
+		// TODO --MOCK--
+		if (true) {
+			startSessionEventBus.fire(new StartSessionEvent(sess.getId()));
+		}
 	}
 
 	public void startSession(Session sess) throws PMLifecycleException {
+		log.info(String.format("enabling session(id%d) polling", sess.getId()));
 		sess.setStatus(SessionStatus.POLLING);
 		sess.setPollingParams(generatePollingParams(sess));
 	}
@@ -69,4 +80,12 @@ public class SessionLifeCycleBean extends AbstractBean {
 		return pp;
 	}
 
+	public void resolveStartSessionEvent(
+			@Observes(during = TransactionPhase.AFTER_SUCCESS) StartSessionEvent sse) {
+		try {
+			sessionFacade.startSession(new SessionInfo(sse.sessionId));
+		} catch (PMException e) {
+			log.error(e.getMessage(), e);
+		}
+	}
 }

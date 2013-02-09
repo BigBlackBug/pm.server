@@ -6,7 +6,7 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
 import org.qbix.pm.server.annotaions.Traceable;
-import org.qbix.pm.server.annotaions.Traceable.LOG_LEVEL;
+import org.qbix.pm.server.annotaions.Traceable.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,17 +17,17 @@ public class TraceInterceptor {
 	@AroundInvoke
 	public Object intercept(InvocationContext aCtx) throws Exception {
 
-		LOG_LEVEL lglvl = null;
+		LogLevel lglvl = null;
 		Class<?> clazz = aCtx.getTarget().getClass();
 		Traceable annotation = clazz.getAnnotation(Traceable.class);
 		if (annotation != null) {
-			lglvl = annotation.LOG_LEVEL();
+			lglvl = annotation.logLevel();
 		}
 		
 		Method method = aCtx.getMethod();
 		annotation = method.getAnnotation(Traceable.class);
 		if (annotation != null) {
-			lglvl = annotation.LOG_LEVEL();
+			lglvl = annotation.logLevel();
 		}
 		
 		if (lglvl == null) {
