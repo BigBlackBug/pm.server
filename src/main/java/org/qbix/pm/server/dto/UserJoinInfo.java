@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+
 //json obj
 public class UserJoinInfo implements Serializable {
 
@@ -11,7 +12,11 @@ public class UserJoinInfo implements Serializable {
 
 	private Long sessid;
 
-	private Map<String, String> params = new HashMap<String, String>();
+	private Long accountid;
+	
+	private Integer team;
+	
+	private Map<String, Object> params = new HashMap<String, Object>();
 
 	public UserJoinInfo() {
 	}
@@ -23,13 +28,29 @@ public class UserJoinInfo implements Serializable {
 	public Long getSessid() {
 		return sessid;
 	}
+	
+	public void setAccountid(Long accountid) {
+		this.accountid = accountid;
+	}
+	
+	public Long getAccountid() {
+		return accountid;
+	}
 
-	public void setParams(Map<String, String> params) {
+	public void setParams(Map<String, Object> params) {
 		this.params = params;
 	}
 
-	public Map<String, String> getParams() {
+	public Map<String, Object> getParams() {
 		return params;
 	}
 
+	public void setTeam(Integer team) {
+		this.team = team;
+	}
+	
+	public Integer getTeam() {
+		return team;
+	}
+	
 }

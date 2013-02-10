@@ -1,5 +1,7 @@
 package org.qbix.pm.server.beans;
 
+import java.math.BigDecimal;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -10,6 +12,8 @@ import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMValidationException;
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.SessionStatus;
+import org.qbix.pm.server.model.SessionTeam;
+import org.qbix.pm.server.model.UserAccount;
 import org.qbix.pm.server.polling.PollingResult;
 
 /**
@@ -51,6 +55,10 @@ public class ValidationBean {
 		notNull(sess.getPlayerRequirements(), "session.playersResolver = null");
 		notNull(sess.getVictoryCriteria(), "session.criteria = null");
 		notNull(sess.getType(), "session.type = null");
+		notNull(sess.getStake(), "session.stake = null");
+
+		assertTrue(sess.getStake().compareTo(new BigDecimal(0)) != -1,
+				"session.stake <= 0");
 
 		// TODO playerVal & criteria validations go here ...
 
@@ -72,10 +80,20 @@ public class ValidationBean {
 	public UserJoinInfo validateUserJoinInfo(UserJoinInfo uji)
 			throws PMValidationException {
 		notNull(uji);
-		notNull(uji.getSessid(), "UserJoinInfo.sessid = null");
+		notNull(uji.getSessid(), "userJoinInfo.sessid = null");
+
+		notNull(uji.getTeam(), "userJoinInfo.team = null");
+		notNull(SessionTeam.valueOf(uji.getTeam()), "userJoinInfo.team != 0/1");
 
 		Session sess = em.find(Session.class, uji.getSessid());
 		notNull(sess, "No session with id = " + uji.getSessid());
+
+		notNull(uji.getAccountid());
+		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
+		notNull(acc, "No userAccount with id = " + uji.getAccountid());
+
+		assertTrue(acc.getCurrency().compareTo(sess.getStake()) != -1,
+				"user.currency < session.stake");
 
 		// TODO ...
 		return uji;
@@ -90,11 +108,9 @@ public class ValidationBean {
 		sess = em.find(Session.class, sess.getId());
 		notNull(sess, "No session with id = " + sessId);
 
-		if (sess.getStatus() != SessionStatus.READY_FOR_POLLING) {
-			throw new PMValidationException(String.format(
-					"session(id%d) is not in 'READY_FOR_POLLING' status",
-					sess.getId()));
-		}
+		assertTrue(sess.getStatus() == SessionStatus.READY_FOR_POLLING,
+				String.format("session(id%d).status != 'READY_FOR_POLLING'",
+						sessId));
 
 		return sess;
 	}

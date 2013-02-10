@@ -53,6 +53,9 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 	public void confirmParticipation(UserJoinInfo uji) throws PMException {
 		uji = validationBean.validateUserJoinInfo(uji);
 		lifecycleBean.confirmParticipation(uji);
+		log.info(String.format(
+				"user(id%d) confirmed participation is session(id%d)",
+				uji.getAccountid(), uji.getSessid()));
 	}
 
 	@Override

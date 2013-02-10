@@ -3,6 +3,7 @@ package org.qbix.pm.server.model.parser;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.Session;
@@ -154,7 +155,7 @@ public class LoLParser extends AbstractParser{
 		return lastGame;
 	}
 
-	private boolean isRightGame(List<Map<String,Object>> jsonPlayers, List<PlayerEntry> realsonObPlayers){
+	private boolean isRightGame(List<Map<String,Object>> jsonPlayers, Set<PlayerEntry> realsonObPlayers){
 		return true;
 	}
 	

@@ -1,9 +1,10 @@
 package org.qbix.pm.server.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 @Entity
 public class PlayerEntry extends AbstractEntity {
@@ -16,8 +17,11 @@ public class PlayerEntry extends AbstractEntity {
 	@Enumerated
 	private SessionTeam team;
 	
-	@OneToOne
+	@ManyToOne
 	private UserAccount account;
+	
+	/** if set - user confirmed participation */
+	private BigDecimal stake = new BigDecimal(-1);
 
 	public Session getSession() {
 		return session;
@@ -43,5 +47,12 @@ public class PlayerEntry extends AbstractEntity {
 		this.account = account;
 	}
 	
+	public BigDecimal getStake() {
+		return stake;
+	}
+	
+	public void setStake(BigDecimal stake) {
+		this.stake = stake;
+	}
 	
 }
