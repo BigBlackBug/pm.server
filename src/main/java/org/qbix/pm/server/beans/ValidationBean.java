@@ -121,11 +121,17 @@ public class ValidationBean {
 		return sess;
 	}
 
-	public PollingResult validatePollResultBeforeAnalyzing(PollingResult pr)
+	public PollingResult validatePollResultBeforeResolving(Long resultId)
 			throws PMValidationException {
-		notNull(pr);
+		notNull(resultId);
+
+		PollingResult pr = em.find(PollingResult.class, resultId);
+		notNull(pr, "pollingResult = null");
 		assertTrue(pr.isGameFinished(), "game is not finished yet");
 
+		assertTrue(pr.getSession().getStatus() == SessionStatus.RESULT_READY,
+				"polling result is not ready");
+		
 		return pr;
 	}
 }

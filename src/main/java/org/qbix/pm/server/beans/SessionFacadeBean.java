@@ -11,7 +11,6 @@ import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.dto.SessionInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMException;
-import org.qbix.pm.server.exceptions.PMLifecycleException;
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.polling.PollingResult;
 import org.slf4j.Logger;
@@ -71,10 +70,10 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 	}
 
 	@Override
-	public void resolveResult(Long resultId) throws PMLifecycleException {
-		//TODO validation
-		PollingResult pr = em.find(PollingResult.class, resultId);
-		lifecycleBean.resolveResultAndStopSession(pr);
+	public void resolveResult(Long resultId) throws PMException {
+		PollingResult pr = validationBean
+				.validatePollResultBeforeResolving(resultId);
+		lifecycleBean.resolveResultAndCloseSession(pr);
 	}
 
 }

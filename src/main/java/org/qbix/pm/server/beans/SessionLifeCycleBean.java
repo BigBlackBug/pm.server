@@ -103,6 +103,7 @@ public class SessionLifeCycleBean extends AbstractBean {
 	}
 
 	private PollingParams generatePollingParams(Session sess) {
+		//TODO implement it!
 		PollingParams pp = new PollingParams();
 		pp.setPollerId(1L);
 		pp.setSession(sess);
@@ -110,7 +111,7 @@ public class SessionLifeCycleBean extends AbstractBean {
 		return pp;
 	}
 
-	public void resolveResultAndStopSession(PollingResult pr)
+	public void resolveResultAndCloseSession(PollingResult pr)
 			throws PMLifecycleException {
 		SimpleMoneyTransferInfo mti = getMoneyTransferInfo(pr);
 		moneyTransfer.transfer(mti);
