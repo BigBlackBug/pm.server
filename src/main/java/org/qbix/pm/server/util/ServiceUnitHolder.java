@@ -10,7 +10,7 @@ import org.qbix.pm.server.polling.HoNPoller;
 import org.qbix.pm.server.polling.PollingParams;
 import org.qbix.pm.server.polling.PollingResult;
 
-public class Cache {
+public class ServiceUnitHolder {
 	private static final Map<Long,Class<?>> STUFF_HOLDER;
 	
 	static{

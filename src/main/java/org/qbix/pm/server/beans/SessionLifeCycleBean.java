@@ -1,5 +1,7 @@
 package org.qbix.pm.server.beans;
 
+import java.util.Date;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -40,11 +42,12 @@ public class SessionLifeCycleBean {
 
 	public void startSessionConfirmation(Session session)
 			throws PMLifecycleException {
-		session.setStatus(SessionStatus.PLAYERS_CONFIRMATION);
+		session.setStatus(SessionStatus.ACCEPTING_PLAYERS);
 	}
 
 	public Long registerSession(Session newSession) throws PMLifecycleException {
 		newSession.setStatus(SessionStatus.REGISTERED);
+		newSession.setCreationDate(new Date());
 		em.persist(newSession);
 		em.flush();
 		em.refresh(newSession);
@@ -70,6 +73,9 @@ public class SessionLifeCycleBean {
 		log.info(String.format("enabling session(id%d) polling", sess.getId()));
 		sess.setStatus(SessionStatus.POLLING);
 		sess.setPollingParams(generatePollingParams(sess));
+		sess.setSessionStartDate(new Date());
+		em.persist(sess);
+		em.flush();
 	}
 
 	private PollingParams generatePollingParams(Session sess) {

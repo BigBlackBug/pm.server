@@ -18,5 +18,30 @@ public class PlayerEntry extends AbstractEntity {
 	
 	@OneToOne
 	private UserAccount account;
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public SessionTeam getTeam() {
+		return team;
+	}
+
+	public void setTeam(SessionTeam team) {
+		this.team = team;
+	}
+
+	public UserAccount getAccount() {
+		return account;
+	}
+
+	public void setAccount(UserAccount account) {
+		this.account = account;
+	}
+	
 	
 }

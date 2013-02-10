@@ -2,7 +2,7 @@ package org.qbix.pm.server.dto;
 
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.SessionStatus;
-import org.qbix.pm.server.util.ParsingUtils;
+import org.qbix.pm.server.model.SessionType;
 
 //json obj
 /**
@@ -75,8 +75,8 @@ public class SessionInfo extends AbstractInfo<Session> {
 	public Session convertToEntity() {
 		Session sess = new Session();
 		sess.setId(sessid);
-		sess.setStatus(SessionStatus.NOT_EXIST);
-		sess.setType(ParsingUtils.getSessTypeByString(type));
+		sess.setStatus(SessionStatus.DOES_NOT_EXIST);
+		sess.setType(SessionType.getSessionType(type));
 		
 		if (pr != null) {
 			sess.setPlayerRequirements(pr.convertToEntity());

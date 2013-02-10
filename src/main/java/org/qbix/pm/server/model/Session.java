@@ -1,5 +1,6 @@
 package org.qbix.pm.server.model;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import org.qbix.pm.server.polling.PollingLogEntry;
@@ -21,7 +24,7 @@ public class Session extends AbstractEntity {
 	private static final long serialVersionUID = 414967553274661010L;
 
 	@Enumerated(EnumType.STRING)
-	private SessionStatus status = SessionStatus.NOT_EXIST;
+	private SessionStatus status = SessionStatus.DOES_NOT_EXIST;
 
 	@Enumerated(EnumType.STRING)
 	private SessionType type;
@@ -46,6 +49,12 @@ public class Session extends AbstractEntity {
 
 	@OneToMany
 	private List<PlayerEntry> players;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date creationDate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date sessionStartDate;
 
 	/** For optimistic locking */
 	@Version
@@ -125,4 +134,23 @@ public class Session extends AbstractEntity {
 	public void setPollingLogs(List<PollingLogEntry> pollingLogs) {
 		this.pollingLogs = pollingLogs;
 	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getSessionStartDate() {
+		return sessionStartDate;
+	}
+
+	public void setSessionStartDate(Date sessionStartDate) {
+		this.sessionStartDate = sessionStartDate;
+	}
+	
+	
+	
 }

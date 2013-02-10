@@ -15,7 +15,7 @@ import org.qbix.pm.server.exceptions.PMPollingException;
 import org.qbix.pm.server.intercept.ResultReadyEvent;
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.SessionStatus;
-import org.qbix.pm.server.util.Cache;
+import org.qbix.pm.server.util.ServiceUnitHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class PollingBean extends AbstractBean {
 		log.debug("polling session(id" + session.getId() + ")");
 
 		PollingParams pollingParams = session.getPollingParams();
-		AbstractPoller<PollingResult, PollingParams> p = Cache
+		AbstractPoller<PollingResult, PollingParams> p = ServiceUnitHolder
 				.getPoller(pollingParams.getPollerId());
 
 		try {
@@ -51,16 +51,18 @@ public class PollingBean extends AbstractBean {
 			logEntry.setTimestamp(result.getTimestamp());
 			logEntry.setSession(session);
 			em.persist(logEntry);
-
-			if (result.isGameFinished()) {
-				session.setStatus(SessionStatus.ANALYZING_RESULT);
-				em.persist(result);
-				em.flush();
-				em.refresh(result);
-				resultReadyEventBus.fire(new ResultReadyEvent(result.getId()));
+			
+			if(result.getReturnCode() == ReturnCode.SUCCESS){
+				if (result.isGameFinished()) {
+					session.setStatus(SessionStatus.ANALYZING_RESULT);
+					em.persist(result);
+					em.flush();
+					em.refresh(result);
+					resultReadyEventBus.fire(new ResultReadyEvent(result.getId()));
+				}
 			}
 
-			log.debug("polling session(id" + session.getId() + ") end");
+			log.debug("polling session(id" + session.getId() + ") ended");
 
 		} catch (PMPollingException e) {
 			log.warn(e.getMessage());

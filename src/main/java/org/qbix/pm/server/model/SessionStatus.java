@@ -2,11 +2,11 @@ package org.qbix.pm.server.model;
 
 public enum SessionStatus {
 
-	NOT_EXIST,
+	DOES_NOT_EXIST,
 
 	REGISTERED,
 
-	PLAYERS_CONFIRMATION,
+	ACCEPTING_PLAYERS,
 	
 	READY_FOR_POLLING,
 

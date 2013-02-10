@@ -4,9 +4,11 @@ public enum ReturnCode {
 	
 	SUCCESS(0),
 	
-	REQUEST_TIMEOUT(1),
+	REQUEST_TIMEOUT(-1),
 	
-	INVALID_RETURN_FORMAT(2);
+	UNKNOWN_ERROR(-2),
+	
+	INVALID_DATA_RETURNED(-3);
 	
 	private int code;
 
@@ -28,7 +30,7 @@ public enum ReturnCode {
 			}
 		}
 		if(i==values.length){
-			throw new IllegalArgumentException("invalid status code");
+			return UNKNOWN_ERROR;
 		}
 		return null;
 	}
