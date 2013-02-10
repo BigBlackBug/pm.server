@@ -1,5 +1,7 @@
 package org.qbix.pm.server.dto;
 
+import java.math.BigDecimal;
+
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.SessionStatus;
 import org.qbix.pm.server.model.SessionType;
@@ -11,6 +13,8 @@ import org.qbix.pm.server.model.SessionType;
 	"sessid" : 1, 
 	
 	"type" : "hon",
+	
+	"stake" : 100.0, 
 
 	"pr" : { "parserId" : 1, "requirements" : { "key1" : "val1" } },
 	
@@ -27,15 +31,17 @@ public class SessionInfo extends AbstractInfo<Session> {
 
 	/** "LOL" , "HON" */
 	private String type;
-	
+
 	private PlayerRequirementsInfo pr;
 
 	private VictoryCriteriaInfo vc;
 
+	private BigDecimal stake;
+
 	public SessionInfo() {
 	}
-	
-	public SessionInfo(Long id){
+
+	public SessionInfo(Long id) {
 		sessid = id;
 	}
 
@@ -43,14 +49,14 @@ public class SessionInfo extends AbstractInfo<Session> {
 		this.sessid = sessionId;
 	}
 
-	public Long getSessionId() {
+	public Long getSessid() {
 		return sessid;
 	}
-	
+
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
 	public String getType() {
 		return type;
 	}
@@ -71,13 +77,22 @@ public class SessionInfo extends AbstractInfo<Session> {
 		return vc;
 	}
 
+	public void setStake(BigDecimal stake) {
+		this.stake = stake;
+	}
+
+	public BigDecimal getStake() {
+		return stake;
+	}
+
 	@Override
 	public Session convertToEntity() {
 		Session sess = new Session();
 		sess.setId(sessid);
 		sess.setStatus(SessionStatus.DOES_NOT_EXIST);
 		sess.setType(SessionType.getSessionType(type));
-		
+		sess.setStake(stake);
+
 		if (pr != null) {
 			sess.setPlayerRequirements(pr.convertToEntity());
 		}

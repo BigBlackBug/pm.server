@@ -3,8 +3,6 @@ package org.qbix.pm.server.polling;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -32,6 +30,7 @@ public class PollingBean extends AbstractBean {
 	@Inject
 	private Event<ResultReadyEvent> resultReadyEventBus;
 
+	@Traceable
 	public void poll(Long sessionId) {
 		Session session = em.find(Session.class, sessionId);
 
@@ -51,14 +50,15 @@ public class PollingBean extends AbstractBean {
 			logEntry.setTimestamp(result.getTimestamp());
 			logEntry.setSession(session);
 			em.persist(logEntry);
-			
-			if(result.getReturnCode() == ReturnCode.SUCCESS){
+
+			if (result.getReturnCode() == ReturnCode.SUCCESS) {
 				if (result.isGameFinished()) {
-					session.setStatus(SessionStatus.ANALYZING_RESULT);
+					session.setStatus(SessionStatus.RESULT_READY);
 					em.persist(result);
 					em.flush();
 					em.refresh(result);
-					resultReadyEventBus.fire(new ResultReadyEvent(result.getId()));
+					resultReadyEventBus.fire(new ResultReadyEvent(result
+							.getId()));
 				}
 			}
 
@@ -69,16 +69,5 @@ public class PollingBean extends AbstractBean {
 			// TODO persisted message
 		}
 	}
-
-	@Traceable
-	public void resolveResult(
-			@Observes(during = TransactionPhase.AFTER_SUCCESS) ResultReadyEvent rre) {
-		PollingResult pr = em.find(PollingResult.class, rre.resultId);
-		Session s = pr.getSession();
-
-		log.info(String.format("resolving session(id%s) result", s.getId()));
-
-		//TODO resolving result goes here ...
-		pr.getSession().setStatus(SessionStatus.PREPARING_TO_TRANSFER);
-	}
+	
 }

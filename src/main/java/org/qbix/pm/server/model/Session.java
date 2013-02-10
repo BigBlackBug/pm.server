@@ -1,7 +1,9 @@
 package org.qbix.pm.server.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -48,13 +50,16 @@ public class Session extends AbstractEntity {
 	private List<PollingLogEntry> pollingLogs;
 
 	@OneToMany
-	private List<PlayerEntry> players;
-	
+	//TODO add OptimisticLock exclusion !!! 
+	private Set<PlayerEntry> players;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date sessionStartDate;
+
+	private BigDecimal stake;
 
 	/** For optimistic locking */
 	@Version
@@ -119,11 +124,11 @@ public class Session extends AbstractEntity {
 		return version;
 	}
 
-	public List<PlayerEntry> getPlayers() {
+	public Set<PlayerEntry> getPlayers() {
 		return players;
 	}
 
-	public void setPlayers(List<PlayerEntry> players) {
+	public void setPlayers(Set<PlayerEntry> players) {
 		this.players = players;
 	}
 
@@ -150,7 +155,13 @@ public class Session extends AbstractEntity {
 	public void setSessionStartDate(Date sessionStartDate) {
 		this.sessionStartDate = sessionStartDate;
 	}
-	
-	
-	
+
+	public BigDecimal getStake() {
+		return stake;
+	}
+
+	public void setStake(BigDecimal stake) {
+		this.stake = stake;
+	}
+
 }
