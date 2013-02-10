@@ -6,6 +6,13 @@ import java.util.Map;
 
 
 //json obj
+/** <code>
+ *  {
+	"sessid" : 89, 
+	"accountid" : 1,
+    "team" : 0
+	} 
+ * </code> */
 public class UserJoinInfo implements Serializable {
 
 	private static final long serialVersionUID = 7025917910203033553L;

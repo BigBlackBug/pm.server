@@ -49,7 +49,7 @@ public class Session extends AbstractEntity {
 	@JoinColumn(name = "session_id")
 	private List<PollingLogEntry> pollingLogs;
 
-	@OneToMany
+	@OneToMany(mappedBy = "session")
 	//TODO add OptimisticLock exclusion !!! 
 	private Set<PlayerEntry> players;
 

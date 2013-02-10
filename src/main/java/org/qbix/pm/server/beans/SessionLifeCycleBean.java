@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -17,7 +16,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.dto.SessionInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMLifecycleException;
@@ -90,10 +88,9 @@ public class SessionLifeCycleBean extends AbstractBean {
 		/*
 		 * if session is ready to start and doesnt require manual start command
 		 */
-		// TODO --MOCK--
-		if (true) {
-			startSessionEventBus.fire(new StartSessionEvent(sess.getId()));
-		}
+		// if (ololo) {
+		// startSessionEventBus.fire(new StartSessionEvent(sess.getId()));
+		// }
 	}
 
 	public void startSession(Session sess) throws PMLifecycleException {
@@ -113,34 +110,17 @@ public class SessionLifeCycleBean extends AbstractBean {
 		return pp;
 	}
 
-	public void resolveStartSessionEvent(
-			@Observes(during = TransactionPhase.AFTER_SUCCESS) StartSessionEvent sse) {
-		try {
-			sessionFacade.startSession(new SessionInfo(sse.sessionId));
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
+	public void resolveResultAndStopSession(PollingResult pr)
+			throws PMLifecycleException {
+		SimpleMoneyTransferInfo mti = getMoneyTransferInfo(pr);
+		moneyTransfer.transfer(mti);
+
+		pr.getSession().setStatus(SessionStatus.CLOSED);
+		log.info("session's(id%d) result resolved, session closed");
+		// TODO additional actions go here ...
 	}
 
-	@Asynchronous
-	@Traceable
-	public void processResultReadyEvent(
-			@Observes(during = TransactionPhase.AFTER_SUCCESS) ResultReadyEvent rre) {
-		try {
-			SimpleMoneyTransferInfo mti = getMoneyTransferInfo(rre.resultId);
-			moneyTransfer.transfer(mti);
-
-			Session sess = em.find(Session.class, rre.resultId);
-			sess.setStatus(SessionStatus.CLOSED);
-			log.info("session's(id%d) result resolved, session closed");
-
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-	}
-
-	private SimpleMoneyTransferInfo getMoneyTransferInfo(Long pollingResultId) {
-		PollingResult pr = em.find(PollingResult.class, pollingResultId);
+	private SimpleMoneyTransferInfo getMoneyTransferInfo(PollingResult pr) {
 		Session sess = pr.getSession();
 
 		log.info(String.format("analyzing session(id%s) result", sess.getId()));
@@ -150,15 +130,17 @@ public class SessionLifeCycleBean extends AbstractBean {
 		List<Long> winners = new ArrayList<Long>();
 		BigDecimal winnersMoney = new BigDecimal(0);
 		for (PlayerEntry pe : sess.getPlayers()) {
-			winnersMoney.add(pe.getStake());
+			// fucking BigDecimal!
+			winnersMoney = new BigDecimal(winnersMoney.doubleValue()
+					+ pe.getStake().doubleValue());
 
-			if (pe.getTeam().equals(winnerTeam)) {
+			if (pe.getTeam().getCode() == winnerTeam.getCode()) {
 				winners.add(pe.getAccount().getId());
 			}
 		}
 
-		BigDecimal moneyFor1Winner = winnersMoney.divide(new BigDecimal(winners
-				.size()));
+		BigDecimal moneyFor1Winner = winnersMoney.divide(
+				new BigDecimal(winners.size()), 2);
 
 		SimpleMoneyTransferInfo mti = new SimpleMoneyTransferInfo(sess.getId());
 
@@ -167,5 +149,23 @@ public class SessionLifeCycleBean extends AbstractBean {
 		}
 
 		return mti;
+	}
+
+	public void processStartSessionEvent(
+			@Observes(during = TransactionPhase.AFTER_SUCCESS) StartSessionEvent sse) {
+		try {
+			sessionFacade.startSession(new SessionInfo(sse.sessionId));
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+
+	public void processResultReadyEvent(
+			@Observes(during = TransactionPhase.AFTER_SUCCESS) ResultReadyEvent rre) {
+		try {
+			sessionFacade.resolveResult(rre.resultId);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
 	}
 }

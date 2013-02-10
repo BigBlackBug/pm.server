@@ -71,8 +71,10 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 	}
 
 	@Override
-	public void resolveResult(PollingResult pr) throws PMLifecycleException {
-		// TODO Auto-generated method stub
+	public void resolveResult(Long resultId) throws PMLifecycleException {
+		//TODO validation
+		PollingResult pr = em.find(PollingResult.class, resultId);
+		lifecycleBean.resolveResultAndStopSession(pr);
 	}
 
 }
