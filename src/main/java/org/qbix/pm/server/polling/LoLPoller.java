@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class LoLPoller extends AbstractPoller<PollingResult, PollingParams> {
+	public static transient final long POLLER_ID = 1L;
 	private static final String API_KEY = "aNtGZQGcZDfRk3dF63DR";
 	private static Logger log = LoggerFactory.getLogger(HoNPoller.class);
 
@@ -37,8 +38,7 @@ public class LoLPoller extends AbstractPoller<PollingResult, PollingParams> {
 		JsonArray array = new JsonArray();
 		JsonParser parser = new JsonParser();
 		for (PlayerEntry player : players) {
-			long accountId = 32766L;
-//			long accountId = player.getAccount().getLolAccountInfo().getAccountId();
+			long accountId = player.getAccount().getLoLAccountInfo().getAccountId();
 			String json = sendRequest(accountId);
 			JsonElement parse = parser.parse(json);
 			array.add(parse);
@@ -49,7 +49,7 @@ public class LoLPoller extends AbstractPoller<PollingResult, PollingParams> {
 	
 	private String sendRequest(long accountId) throws PMPollingException{
 		ClientRequest request = new ClientRequest(String.format(
-				"http://api.elophant.com/v2/na/recent_games/%s?key=%s", accountId, API_KEY));
+				"http://api.elophant.com/v2/eune/recent_games/%s?key=%s", accountId, API_KEY));
 
 		request.accept(MediaType.APPLICATION_JSON);
 		

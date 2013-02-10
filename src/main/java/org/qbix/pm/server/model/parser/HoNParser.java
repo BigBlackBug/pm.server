@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 
 public class HoNParser extends AbstractParser{
 
-	public static final Long PARSER_ID = 10L;
+	public static transient final long PARSER_ID = 100L;
 
 	@Override
 	public boolean isGameFinished(JsonObject json, Date sessionStartDate) {

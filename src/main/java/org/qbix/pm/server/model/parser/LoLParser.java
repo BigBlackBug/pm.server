@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 public class LoLParser extends AbstractParser{
+	public static transient final long PARSER_ID = 101L;
 
 	private static enum LoLTeam{
 		TEAM_0(100,SessionTeam.TEAM_0),
@@ -149,7 +150,7 @@ public class LoLParser extends AbstractParser{
 		JsonArray players = json.get("players").getAsJsonArray();
 		JsonElement data = players.get(0).getAsJsonObject().get("data");
 		JsonArray games = data.getAsJsonObject().get("gameStatistics").getAsJsonArray();
-		JsonObject lastGame = games.get(0).getAsJsonObject();
+		JsonObject lastGame = games.get(games.size()-1).getAsJsonObject();
 		return lastGame;
 	}
 
@@ -177,12 +178,9 @@ public class LoLParser extends AbstractParser{
 
 	@Override
 	protected boolean isGameFinished(JsonObject json, Date sessionStartDate) {
-		JsonArray players = json.get("players").getAsJsonArray();
-		JsonObject data = players.get(0).getAsJsonObject();
-		JsonArray stats = data.get("gameStatistics").getAsJsonArray();
-		JsonObject game = stats.get(0).getAsJsonObject();//most recent game
-		String creationDate = game.get("createDate").getAsString();
-		return parseDate(creationDate).after(sessionStartDate);
+		JsonObject game = getLastGame(json);
+		String endDate = game.get("createDate").getAsString();
+		return parseDate(endDate).after(sessionStartDate);
 	}
 
 }
