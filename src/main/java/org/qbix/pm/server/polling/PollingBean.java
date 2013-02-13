@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 
 import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.beans.AbstractBean;
+import org.qbix.pm.server.exceptions.PMParsingException;
 import org.qbix.pm.server.exceptions.PMPollingException;
 import org.qbix.pm.server.intercept.ResultReadyEvent;
 import org.qbix.pm.server.model.Session;
@@ -51,15 +52,12 @@ public class PollingBean extends AbstractBean {
 			logEntry.setSession(session);
 			em.persist(logEntry);
 
-			if (result.getReturnCode() == ReturnCode.SUCCESS) {
-				if (result.isGameFinished()) {
-					session.setStatus(SessionStatus.RESULT_READY);
-					em.persist(result);
-					em.flush();
-					em.refresh(result);
-					resultReadyEventBus.fire(new ResultReadyEvent(result
-							.getId()));
-				}
+			if (result.isGameFinished()) {
+				session.setStatus(SessionStatus.RESULT_READY);
+				em.persist(result);
+				em.flush();
+				em.refresh(result);
+				resultReadyEventBus.fire(new ResultReadyEvent(result.getId()));
 			}
 
 			log.debug("polling session(id" + session.getId() + ") ended");
@@ -67,6 +65,9 @@ public class PollingBean extends AbstractBean {
 		} catch (PMPollingException e) {
 			log.warn(e.getMessage());
 			// TODO persisted message
+		} catch (PMParsingException e) {
+			// TODO persisted message
+			log.warn(e.getMessage());
 		}
 	}
 	

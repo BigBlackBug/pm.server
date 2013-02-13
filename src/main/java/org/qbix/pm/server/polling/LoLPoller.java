@@ -22,17 +22,34 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class LoLPoller extends AbstractPoller<PollingResult, PollingParams> {
-	private static final String API_KEY = "aNtGZQGcZDfRk3dF63DR";
 	private static Logger log = LoggerFactory.getLogger(LoLPoller.class);
+	
+	private static final String API_KEY = "aNtGZQGcZDfRk3dF63DR";
+	private static final String DEFAULT_REGION = "eune";
+	private static final String RECENT_GAMES_REQUEST = 
+			"http://api.elophant.com/v2/%s/recent_games/%s?key=%s";
 
 	@Override
-	protected JsonObject getJson(PollingParams params)
+	protected JsonObject getDataJson(PollingParams params)
 			throws PMPollingException {
 		Session session = params.getSession();
 		Set<PlayerEntry> players = session.getPlayers();
 
 		JsonObject json = assembleJson(players);
 		return json;
+	}
+	
+	@Override
+	protected JsonObject getDateJson(PollingParams params)
+			throws PMPollingException {
+		JsonParser parser = new JsonParser();
+		Session session = params.getSession();
+		PlayerEntry player = session.getPlayers().iterator().next();
+		long accountId = player.getAccount().getGamesAccounts()
+				.get(UserAccount.GameAccountType.LOL);
+		String json = sendRequest(accountId);
+		JsonObject parse = parser.parse(json).getAsJsonObject();
+		return parse;
 	}
 
 	private JsonObject assembleJson(Set<PlayerEntry> players)
@@ -51,31 +68,11 @@ public class LoLPoller extends AbstractPoller<PollingResult, PollingParams> {
 		object.add("players", array);
 		return object;
 	}
-
+	
 	private String sendRequest(long accountId) throws PMPollingException {
-		ClientRequest request = new ClientRequest(String.format(
-				"http://api.elophant.com/v2/na/recent_games/%s?key=%s",
-				accountId, API_KEY));
-
-		request.accept(MediaType.APPLICATION_JSON);
-
-		ClientResponse<String> response = null;
-		try {
-			response = request.get(String.class);
-		} catch (Exception e) {
-			log.warn("unable to execute request");
-			throw new PMPollingException("unable to execute request",
-					ReturnCode.UNKNOWN_ERROR);
-		}
-
-		int statusCode = response.getStatus();
-		if (statusCode != 200) {
-			log.warn("request failed: error_code = " + statusCode);
-			throw new PMPollingException("unable to execute request",
-					statusCode);
-		}
-
-		String json = response.getEntity();
+		String url = String.format(RECENT_GAMES_REQUEST, DEFAULT_REGION,
+				accountId, API_KEY);
+		String json = sendRequest(url);
 		if (isDataOk(json)) {
 			return json;
 		} else {

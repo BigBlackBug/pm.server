@@ -7,4 +7,9 @@ public class EqIntModifier extends AbstractIntModifier{
 		return source == target;
 	}
 
+	@Override
+	public boolean satisfies(Integer source, Integer target, Integer threshold) {
+		return source >= target - threshold && source <= target + threshold;
+	}
+
 }

@@ -62,7 +62,7 @@ public class LoLParser extends AbstractParser{
 		boolean killCriteriaSatisfied;
 
 		JsonObject lastGame = getLastGame(json);
-		List<Map<String,Object>> jsonPlayers = (List<Map<String, Object>>) lastGame.get("fellowPlayers");
+		JsonArray jsonPlayers = lastGame.get("fellowPlayers").getAsJsonArray();
 		
 		if(!isRightGame(jsonPlayers, session.getPlayers())){
 			//TODO GET TO THE CHOPPER WE'RE FUCKED
@@ -150,11 +150,11 @@ public class LoLParser extends AbstractParser{
 		JsonArray players = json.get("players").getAsJsonArray();
 		JsonElement data = players.get(0).getAsJsonObject().get("data");
 		JsonArray games = data.getAsJsonObject().get("gameStatistics").getAsJsonArray();
-		JsonObject lastGame = games.get(0).getAsJsonObject();
+		JsonObject lastGame = games.get(games.size()-1).getAsJsonObject();
 		return lastGame;
 	}
 
-	private boolean isRightGame(List<Map<String,Object>> jsonPlayers, Set<PlayerEntry> realsonObPlayers){
+	private boolean isRightGame(JsonArray jsonPlayers, Set<PlayerEntry> realsonObPlayers){
 		return true;
 	}
 	
@@ -178,10 +178,9 @@ public class LoLParser extends AbstractParser{
 
 	@Override
 	protected boolean isGameFinished(JsonObject json, Date sessionStartDate) {
-		JsonArray players = json.get("players").getAsJsonArray();
-		JsonObject data = players.get(0).getAsJsonObject();
+		JsonObject data = json.get("data").getAsJsonObject();
 		JsonArray stats = data.get("gameStatistics").getAsJsonArray();
-		JsonObject game = stats.get(0).getAsJsonObject();//most recent game
+		JsonObject game = stats.get(stats.size()-1).getAsJsonObject();//most recent game
 		String creationDate = game.get("createDate").getAsString();
 		return parseDate(creationDate).after(sessionStartDate);
 	}
