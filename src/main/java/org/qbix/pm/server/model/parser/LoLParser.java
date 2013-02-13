@@ -16,7 +16,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 public class LoLParser extends AbstractParser{
-	public static transient final long PARSER_ID = 101L;
 
 	private static enum LoLTeam{
 		TEAM_0(100,SessionTeam.TEAM_0),
@@ -63,7 +62,7 @@ public class LoLParser extends AbstractParser{
 		boolean killCriteriaSatisfied;
 
 		JsonObject lastGame = getLastGame(json);
-		List<Map<String,Object>> jsonPlayers = (List<Map<String, Object>>) lastGame.get("fellowPlayers");
+		JsonArray jsonPlayers = lastGame.get("fellowPlayers").getAsJsonArray();
 		
 		if(!isRightGame(jsonPlayers, session.getPlayers())){
 			//TODO GET TO THE CHOPPER WE'RE FUCKED
@@ -155,7 +154,7 @@ public class LoLParser extends AbstractParser{
 		return lastGame;
 	}
 
-	private boolean isRightGame(List<Map<String,Object>> jsonPlayers, Set<PlayerEntry> realsonObPlayers){
+	private boolean isRightGame(JsonArray jsonPlayers, Set<PlayerEntry> realsonObPlayers){
 		return true;
 	}
 	
@@ -179,9 +178,11 @@ public class LoLParser extends AbstractParser{
 
 	@Override
 	protected boolean isGameFinished(JsonObject json, Date sessionStartDate) {
-		JsonObject game = getLastGame(json);
-		String endDate = game.get("createDate").getAsString();
-		return parseDate(endDate).after(sessionStartDate);
+		JsonObject data = json.get("data").getAsJsonObject();
+		JsonArray stats = data.get("gameStatistics").getAsJsonArray();
+		JsonObject game = stats.get(stats.size()-1).getAsJsonObject();//most recent game
+		String creationDate = game.get("createDate").getAsString();
+		return parseDate(creationDate).after(sessionStartDate);
 	}
 
 }

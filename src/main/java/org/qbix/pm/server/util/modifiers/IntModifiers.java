@@ -27,6 +27,10 @@ public enum IntModifiers {
 		return modifier.satisfies(source, target);
 	}
 	
+	public boolean satisfies(int source, int target, int threshold){
+		return modifier.satisfies(source, target, threshold);
+	}
+	
 	public static IntModifiers getValueOf(String id) throws IllegalArgumentException{
 		int i;
 		IntModifiers[] values = IntModifiers.values();

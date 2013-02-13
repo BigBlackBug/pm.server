@@ -6,5 +6,10 @@ public class GtIntModifier extends AbstractIntModifier {
 	public boolean satisfies(Integer source, Integer target) {
 		return source > target;
 	}
+	
+	@Override
+	public boolean satisfies(Integer source, Integer target, Integer threshold) {
+		return source > target && source < target + threshold;
+	}
 
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -17,7 +18,7 @@ public class PlayerEntry extends AbstractEntity {
 	@Enumerated
 	private SessionTeam team;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	private UserAccount account;
 	
 	/** if set - user confirmed participation */
