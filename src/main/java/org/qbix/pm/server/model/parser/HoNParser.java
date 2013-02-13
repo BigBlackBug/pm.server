@@ -24,7 +24,7 @@ import com.google.gson.JsonObject;
 public class HoNParser extends AbstractParser{
 	private static Logger log = LoggerFactory.getLogger(HoNParser.class);
 	
-	public static final Long PARSER_ID = 10L;
+	public static final Long PARSER_ID = 100L;
 	private static final DateFormat HON_INPUT_DATE_FORMATTER  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	private static enum HoNTeam{

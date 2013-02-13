@@ -18,8 +18,8 @@ public class ServiceUnitHolder {
 	static{
 		STUFF_HOLDER = new HashMap<Long, Class<?>>();
 		STUFF_HOLDER.put(HoNPoller.POLLER_ID, HoNPoller.class);
-		STUFF_HOLDER.put(HoNParser.PARSER_ID, HoNParser.class);
 		STUFF_HOLDER.put(LoLPoller.POLLER_ID, HoNPoller.class);
+		STUFF_HOLDER.put(HoNParser.PARSER_ID, HoNParser.class);
 		STUFF_HOLDER.put(LoLParser.PARSER_ID, HoNParser.class);
 	}
 	

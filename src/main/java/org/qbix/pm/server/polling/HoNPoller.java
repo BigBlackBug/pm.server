@@ -15,7 +15,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class HoNPoller extends AbstractPoller<PollingResult, PollingParams> {
-	public static transient final long POLLER_ID = 1L;
+	public static transient final long POLLER_ID = 0L;
 	private static final String API_TOKEN = "YH34V9ZLJ42568WQ";
 	private static final String MATCH_HISTORY_REQUEST = 
 			"http://api.heroesofnewerth.com/match_history/public/accountid/%s/?token=%s";

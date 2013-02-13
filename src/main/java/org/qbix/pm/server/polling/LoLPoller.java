@@ -4,10 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.core.MediaType;
-
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
 import org.qbix.pm.server.exceptions.PMPollingException;
 import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.Session;
@@ -23,6 +19,7 @@ import com.google.gson.JsonParser;
 
 public class LoLPoller extends AbstractPoller<PollingResult, PollingParams> {
 	private static Logger log = LoggerFactory.getLogger(LoLPoller.class);
+	public static final long POLLER_ID = 1L;
 	
 	private static final String API_KEY = "aNtGZQGcZDfRk3dF63DR";
 	private static final String DEFAULT_REGION = "eune";

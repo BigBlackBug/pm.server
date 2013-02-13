@@ -16,7 +16,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 public class LoLParser extends AbstractParser{
-
+	
+	public static final Long PARSER_ID = 101L;
+	
 	private static enum LoLTeam{
 		TEAM_0(100,SessionTeam.TEAM_0),
 		TEAM_1(200,SessionTeam.TEAM_1);
@@ -45,7 +47,7 @@ public class LoLParser extends AbstractParser{
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public SessionTeam getWinner(JsonObject json, Session session) {
