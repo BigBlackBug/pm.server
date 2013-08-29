@@ -7,4 +7,5 @@ public interface MonitoringResourceMXBean {
 
 	public void logInfo(String message);
 	
+	public String getCurrentYMBalance(int startRec, int recCount);
 }

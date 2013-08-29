@@ -11,6 +11,7 @@ import javax.persistence.PersistenceContext;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMValidationException;
 import org.qbix.pm.server.model.PlayerEntry;
+import org.qbix.pm.server.model.PlayerRequirements;
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.SessionStatus;
 import org.qbix.pm.server.model.SessionTeam;
@@ -53,7 +54,6 @@ public class ValidationBean {
 	public Session validateSessionBeforeRegister(Session sess)
 			throws PMValidationException {
 		notNull(sess, "session = null");
-		notNull(sess.getPlayerRequirements(), "session.playersResolver = null");
 		notNull(sess.getVictoryCriteria(), "session.criteria = null");
 		notNull(sess.getType(), "session.type = null");
 		notNull(sess.getStake(), "session.stake = null");
@@ -61,10 +61,28 @@ public class ValidationBean {
 		assertTrue(sess.getStake().compareTo(new BigDecimal(0)) != -1,
 				"session.stake <= 0");
 
-		// TODO playerVal & criteria validations go here ...
+		validatePlayerRequirements(sess.getPlayerRequirements());
+
+		// TODO criteria validations go here ...
 
 		sess.setId(null);
 		return sess;
+	}
+
+	private void validatePlayerRequirements(PlayerRequirements reqs)
+			throws PMValidationException {
+		notNull(reqs, "session.playerRequirements = null");
+
+		// Map<String, Object> params = reqs.getParamsMap();
+		// Object playersIds = params
+		// .get(PlayerRequirementsInfo.PLAYERS_IDS_PROP_NAME);
+
+		// notNull(playersIds,
+		// "PlayerRequirements don't contain players ids list");
+		// assertTrue(playersIds instanceof List,
+		// "PlayerRequirements don't contain players ids LIST");
+
+		// TODO validation here ...
 	}
 
 	public Session validateSessionBeforeConfStart(Session sess)
@@ -131,7 +149,7 @@ public class ValidationBean {
 
 		assertTrue(pr.getSession().getStatus() == SessionStatus.RESULT_READY,
 				"polling result is not ready");
-		
+
 		return pr;
 	}
 }

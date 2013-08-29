@@ -75,8 +75,9 @@ public class SessionLifeCycleBean extends AbstractBean {
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
 
 		sess.setStatus(SessionStatus.READY_FOR_POLLING);
-		moneyTransfer.userSessionParticipation(sess, acc, sess.getStake()
-				.negate());
+		// TODO перенести трансферинг денег в метод старта сессии
+		// moneyTransfer.userSessionParticipation(sess, acc, sess.getStake()
+		// .negate());
 
 		PlayerEntry pe = new PlayerEntry();
 		pe.setSession(sess);
@@ -88,9 +89,13 @@ public class SessionLifeCycleBean extends AbstractBean {
 		/*
 		 * if session is ready to start and doesnt require manual start command
 		 */
-		// if (ololo) {
-		// startSessionEventBus.fire(new StartSessionEvent(sess.getId()));
-		// }
+		if (checkIsSessionIsReadyToStart(sess)) {
+			startSessionEventBus.fire(new StartSessionEvent(sess.getId()));
+		}
+	}
+
+	private boolean checkIsSessionIsReadyToStart(Session sess) {
+		return false;
 	}
 
 	public void startSession(Session sess) throws PMLifecycleException {
@@ -100,10 +105,11 @@ public class SessionLifeCycleBean extends AbstractBean {
 		sess.setSessionStartDate(new Date());
 		em.persist(sess);
 		em.flush();
+		startSessionEventBus.fire(new StartSessionEvent(sess.getId()));
 	}
 
 	private PollingParams generatePollingParams(Session sess) {
-		//TODO implement it!
+		// TODO implement it!
 		PollingParams pp = new PollingParams();
 		pp.setPollerId(1L);
 		pp.setSession(sess);

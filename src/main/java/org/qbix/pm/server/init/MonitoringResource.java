@@ -9,6 +9,7 @@ import javax.ejb.Startup;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.qbix.pm.server.money.YMFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public class MonitoringResource implements MonitoringResourceMXBean {
 
 	private Logger log = LoggerFactory.getLogger(MonitoringResource.class);
-	
+
 	protected MBeanServer platformMBeanServer;
 	protected ObjectName objectName = null;
 
@@ -47,6 +48,16 @@ public class MonitoringResource implements MonitoringResourceMXBean {
 	@Override
 	public void logInfo(String message) {
 		log.info(message);
+	}
+
+	@Override
+	public String getCurrentYMBalance(int startRec, int recCount) {
+		try {
+			return new YMFacade().getPaymentHistoryAsString(startRec, recCount);
+		} catch (Exception e) {
+			log.error("mxbean err", e);
+			return "error";
+		}
 	}
 
 }
