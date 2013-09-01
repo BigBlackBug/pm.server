@@ -1,10 +1,14 @@
 package org.qbix.pm.server.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
@@ -14,6 +18,9 @@ public abstract class AbstractEntity implements Serializable {
 	@GeneratedValue
 	@Id
 	private Long id;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date creationDate;
 
 	public void setId(Long id) {
 		this.id = id;
@@ -21,6 +28,19 @@ public abstract class AbstractEntity implements Serializable {
 
 	public Long getId() {
 		return id;
+	}
+	
+	protected void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+	
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	
+	@PrePersist
+	void setCreationDate(){
+		setCreationDate(new Date());
 	}
 
 	@Override

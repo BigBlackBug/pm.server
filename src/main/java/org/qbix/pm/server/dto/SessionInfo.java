@@ -1,9 +1,12 @@
 package org.qbix.pm.server.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import javax.persistence.EntityManager;
+
+import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.Session;
-import org.qbix.pm.server.model.SessionStatus;
 import org.qbix.pm.server.model.SessionType;
 
 //json obj
@@ -32,12 +35,14 @@ public class SessionInfo extends AbstractInfo<Session> {
 	/** "LOL" , "HON" */
 	private String type;
 
-	private PlayerRequirementsInfo pr;
-
 	private VictoryCriteriaInfo vc;
 
 	private BigDecimal stake;
 
+	private List<PlayerEntryInfo> playerInfos;
+
+	private int status ;
+	
 	public SessionInfo() {
 	}
 
@@ -53,20 +58,20 @@ public class SessionInfo extends AbstractInfo<Session> {
 		return sessid;
 	}
 
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	
+	public int getStatus() {
+		return status;
+	}
+	
 	public void setType(String type) {
 		this.type = type;
 	}
 
 	public String getType() {
 		return type;
-	}
-
-	public void setPr(PlayerRequirementsInfo playerRequirements) {
-		this.pr = playerRequirements;
-	}
-
-	public PlayerRequirementsInfo getPr() {
-		return pr;
 	}
 
 	public void setVc(VictoryCriteriaInfo vc) {
@@ -85,19 +90,34 @@ public class SessionInfo extends AbstractInfo<Session> {
 		return stake;
 	}
 
+	public void setPlayerInfos(List<PlayerEntryInfo> playerInfos) {
+		this.playerInfos = playerInfos;
+	}
+
+	public List<PlayerEntryInfo> getPlayerInfos() {
+		return playerInfos;
+	}
+
 	@Override
-	public Session convertToEntity() {
+	public Session convertToEntity(EntityManager em) {
 		Session sess = new Session();
-		sess.setId(sessid);
-		sess.setStatus(SessionStatus.DOES_NOT_EXIST);
+		if(sessid != null){
+			sess.setId(sessid);
+			return sess;
+		}
 		sess.setType(SessionType.getSessionType(type));
 		sess.setStake(stake);
 
-		if (pr != null) {
-			sess.setPlayerRequirements(pr.convertToEntity());
+		if (playerInfos != null) {
+			for (PlayerEntryInfo pei : playerInfos) {
+				PlayerEntry pe = pei.convertToEntity(em);
+				pe.setSession(sess);
+				sess.getPlayers().add(pe);
+			}
 		}
+
 		if (vc != null) {
-			sess.setVictoryCriteria(vc.convertToEntity());
+			sess.setVictoryCriteria(vc.convertToEntity(em));
 		}
 		return sess;
 	}

@@ -1,10 +1,15 @@
 package org.qbix.pm.server.model;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 
 import com.google.gson.Gson;
 
@@ -13,10 +18,14 @@ public abstract class EntityWithSerializedParams extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(length = 4096, name = "json_params")
+	@Lob
+	@Basic(fetch = FetchType.EAGER)
+	@Column(name = "json_params")
 	protected String jsonParams;
 
 	private transient Map<String, Object> paramsMap;
+
+	private transient boolean convertMapParams = false;
 
 	public void setJsonParams(String parameters) {
 		this.jsonParams = parameters;
@@ -31,12 +40,41 @@ public abstract class EntityWithSerializedParams extends AbstractEntity {
 		if (paramsMap != null) {
 			return paramsMap;
 		}
+		
+		// если мы получали карту, то возможно мы в нее что то записывали, и
+		// поэтому при следующем персисте/апдейте мы должны конвертить ее в
+		// json, чтобы записать в бд
 
-		if (getJsonParams() == null) {
-			return Collections.EMPTY_MAP;
+		// TODO переписать, тк вызывается слишком много конвертов, даже когда они
+		// нах не нужны
+		convertMapParams = true;
+
+		if ((getJsonParams() == null) || getJsonParams().isEmpty()) {
+			paramsMap = new HashMap<String, Object>(); 
+			return paramsMap;
 		}
 
 		paramsMap = new Gson().fromJson(jsonParams, Map.class);
+		
 		return paramsMap;
 	}
+	
+	void convertMapAndSetJSParams(){
+		jsonParams = new Gson().toJson(getParamsMap());
+	}
+	
+	@PrePersist
+	protected void convertParamsPP() {
+		if (convertMapParams) {
+			convertMapAndSetJSParams();
+		}
+	}
+
+	@PreUpdate
+	protected void convertParamsPU() {
+		if (convertMapParams) {
+			convertMapAndSetJSParams();
+		}
+	}
+
 }

@@ -23,7 +23,8 @@ public enum SessionTeam {
 			return TEAM_1;
 		}
 
-		return null;
+		throw new IllegalArgumentException(
+				"No SessionTeam enum value for value = " + code);
 	}
 
 }

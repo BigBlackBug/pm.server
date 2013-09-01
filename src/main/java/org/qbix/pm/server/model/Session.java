@@ -1,7 +1,8 @@
 package org.qbix.pm.server.model;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,12 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Version;
-
-import org.qbix.pm.server.polling.PollingLogEntry;
-import org.qbix.pm.server.polling.PollingParams;
 
 @Entity
 public class Session extends AbstractEntity {
@@ -32,33 +28,24 @@ public class Session extends AbstractEntity {
 	private SessionType type;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
-	private PlayerRequirements playerRequirements;
-
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
 	private VictoryCriteria victoryCriteria;
-
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
-	private PollingParams pollingParams;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
 	@JoinColumn(name = "session_id")
-	@OrderBy("timestamp")
-	private List<SessionLifeCycleEntry> lifeCycleEntries;
+	@OrderBy("creationDate")
+	private List<SessionLifeCycleEntry> lifeCycleEntries = new ArrayList<SessionLifeCycleEntry>();
 
 	@OneToMany(cascade = { CascadeType.REMOVE })
 	@JoinColumn(name = "session_id")
-	private List<PollingLogEntry> pollingLogs;
+	private List<ScheduledTaskLog> pollingLogs = new ArrayList<ScheduledTaskLog>();
 
 	@OneToMany(mappedBy = "session")
 	//TODO add OptimisticLock exclusion !!! 
-	private Set<PlayerEntry> players;
+	private Set<PlayerEntry> players = new HashSet<PlayerEntry>();
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date creationDate;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date sessionStartDate;
-
+	@OneToOne
+	private UserAccount initiator;
+	
 	private BigDecimal stake;
 
 	/** For optimistic locking */
@@ -66,14 +53,6 @@ public class Session extends AbstractEntity {
 	private Long version;
 
 	public Session() {
-	}
-
-	public void setPlayerRequirements(PlayerRequirements playerRequirements) {
-		this.playerRequirements = playerRequirements;
-	}
-
-	public PlayerRequirements getPlayerRequirements() {
-		return playerRequirements;
 	}
 
 	public void setVictoryCriteria(VictoryCriteria victoryCriteria) {
@@ -108,14 +87,6 @@ public class Session extends AbstractEntity {
 		return lifeCycleEntries;
 	}
 
-	public void setPollingParams(PollingParams pollingParams) {
-		this.pollingParams = pollingParams;
-	}
-
-	public PollingParams getPollingParams() {
-		return pollingParams;
-	}
-
 	public void setVersion(Long version) {
 		this.version = version;
 	}
@@ -132,28 +103,12 @@ public class Session extends AbstractEntity {
 		this.players = players;
 	}
 
-	public List<PollingLogEntry> getPollingLogs() {
+	public List<ScheduledTaskLog> getPollingLogs() {
 		return pollingLogs;
 	}
 
-	public void setPollingLogs(List<PollingLogEntry> pollingLogs) {
+	public void setPollingLogs(List<ScheduledTaskLog> pollingLogs) {
 		this.pollingLogs = pollingLogs;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getSessionStartDate() {
-		return sessionStartDate;
-	}
-
-	public void setSessionStartDate(Date sessionStartDate) {
-		this.sessionStartDate = sessionStartDate;
 	}
 
 	public BigDecimal getStake() {
@@ -162,6 +117,14 @@ public class Session extends AbstractEntity {
 
 	public void setStake(BigDecimal stake) {
 		this.stake = stake;
+	}
+	
+	public UserAccount getInitiator() {
+		return initiator;
+	}
+	
+	public void setInitiator(UserAccount initiator) {
+		this.initiator = initiator;
 	}
 
 }

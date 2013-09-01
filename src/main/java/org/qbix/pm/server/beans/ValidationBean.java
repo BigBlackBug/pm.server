@@ -8,15 +8,12 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.qbix.pm.server.dto.ResultInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMValidationException;
 import org.qbix.pm.server.model.PlayerEntry;
-import org.qbix.pm.server.model.PlayerRequirements;
 import org.qbix.pm.server.model.Session;
-import org.qbix.pm.server.model.SessionStatus;
-import org.qbix.pm.server.model.SessionTeam;
 import org.qbix.pm.server.model.UserAccount;
-import org.qbix.pm.server.polling.PollingResult;
 
 /**
  * Validates entities/info. <br>
@@ -61,28 +58,8 @@ public class ValidationBean {
 		assertTrue(sess.getStake().compareTo(new BigDecimal(0)) != -1,
 				"session.stake <= 0");
 
-		validatePlayerRequirements(sess.getPlayerRequirements());
-
-		// TODO criteria validations go here ...
-
 		sess.setId(null);
 		return sess;
-	}
-
-	private void validatePlayerRequirements(PlayerRequirements reqs)
-			throws PMValidationException {
-		notNull(reqs, "session.playerRequirements = null");
-
-		// Map<String, Object> params = reqs.getParamsMap();
-		// Object playersIds = params
-		// .get(PlayerRequirementsInfo.PLAYERS_IDS_PROP_NAME);
-
-		// notNull(playersIds,
-		// "PlayerRequirements don't contain players ids list");
-		// assertTrue(playersIds instanceof List,
-		// "PlayerRequirements don't contain players ids LIST");
-
-		// TODO validation here ...
 	}
 
 	public Session validateSessionBeforeConfStart(Session sess)
@@ -101,9 +78,6 @@ public class ValidationBean {
 		notNull(uji);
 		notNull(uji.getSessid(), "userJoinInfo.sessid = null");
 
-		notNull(uji.getTeam(), "userJoinInfo.team = null");
-		notNull(SessionTeam.valueOf(uji.getTeam()), "userJoinInfo.team != 0/1");
-
 		Session sess = em.find(Session.class, uji.getSessid());
 		notNull(sess, "No session with id = " + uji.getSessid());
 
@@ -111,6 +85,7 @@ public class ValidationBean {
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
 		notNull(acc, "No userAccount with id = " + uji.getAccountid());
 
+		//TODO check correсtly!
 		assertTrue(acc.getCurrency().compareTo(sess.getStake()) != -1,
 				"user.currency < session.stake");
 
@@ -119,7 +94,6 @@ public class ValidationBean {
 					"session already contains this player");
 		}
 
-		// TODO ...
 		return uji;
 	}
 
@@ -132,24 +106,20 @@ public class ValidationBean {
 		sess = em.find(Session.class, sess.getId());
 		notNull(sess, "No session with id = " + sessId);
 
-		assertTrue(sess.getStatus() == SessionStatus.READY_FOR_POLLING,
-				String.format("session(id%d).status != 'READY_FOR_POLLING'",
-						sessId));
+//		assertTrue(sess.getStatus() == SessionStatus.READY_FOR_POLLING,
+//				String.format("session(id%d).status != 'READY_FOR_POLLING'",
+//						sessId));
 
 		return sess;
 	}
 
-	public PollingResult validatePollResultBeforeResolving(Long resultId)
-			throws PMValidationException {
-		notNull(resultId);
-
-		PollingResult pr = em.find(PollingResult.class, resultId);
-		notNull(pr, "pollingResult = null");
-		assertTrue(pr.isGameFinished(), "game is not finished yet");
-
-		assertTrue(pr.getSession().getStatus() == SessionStatus.RESULT_READY,
-				"polling result is not ready");
-
-		return pr;
+	public ResultInfo validateResult(ResultInfo ri) throws PMValidationException{
+		notNull(ri);
+		Session sess = em.find(Session.class, ri.getSessid());
+		notNull(sess, "No session with id = " + sess.getId());
+		
+		//TODO session status check
+		
+		return ri;
 	}
 }

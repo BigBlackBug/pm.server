@@ -3,34 +3,18 @@ package org.qbix.pm.server.dto;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import org.qbix.pm.server.model.VictoryCriteria;
 
-import com.google.gson.Gson;
-
 //json
-/**"victory_criteria" : {
-	"parser_id" : , 2 // 
-	"criteria" : {
-		team1:{
-			winner : "legion",
-			time : {
-				"$eq" : 15,
-				"threshold" : 3
-			},
-			players : [
-				player : {
-					nick : "bigblackbug",
-					kills : {"$gt" : 15}
-				}
-			]
-		},
-		team2:{
-			winner : "hellbourne",
-		}
-	}
-}**/
-public class VictoryCriteriaInfo extends
-		AbstractInfo<VictoryCriteria> {
+/**
+ * "victory_criteria" : { "parser_id" : , 2 // "criteria" : { team1:{ winner :
+ * "legion", time : { "$eq" : 15, "threshold" : 3 }, players : [ player : { nick
+ * : "bigblackbug", kills : {"$gt" : 15} } ] }, team2:{ winner : "hellbourne", }
+ * } }
+ **/
+public class VictoryCriteriaInfo extends AbstractInfo<VictoryCriteria> {
 
 	private static final long serialVersionUID = 2549283300751914989L;
 
@@ -50,17 +34,19 @@ public class VictoryCriteriaInfo extends
 	public void setCriteria(Map<String, Object> criteria) {
 		this.criteria = criteria;
 	}
-	
+
 	public Map<String, Object> getCriteria() {
 		return criteria;
 	}
-	
+
 	@Override
-	public VictoryCriteria convertToEntity() {
-		VictoryCriteria criteria = new VictoryCriteria();
-		criteria.setParserId(parserId);
-		criteria.setJsonParams(new Gson().toJson(criteria));
-		return criteria;
+	public VictoryCriteria convertToEntity(EntityManager em) {
+		VictoryCriteria vc = new VictoryCriteria();
+		vc.setParserId(parserId);
+		if (vc != null) {
+			vc.getParamsMap().putAll(criteria);
+		}
+		return vc;
 	}
 
 }

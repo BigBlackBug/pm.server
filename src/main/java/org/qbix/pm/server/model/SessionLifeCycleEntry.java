@@ -1,7 +1,5 @@
 package org.qbix.pm.server.model;
 
-import java.util.Date;
-
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
@@ -17,9 +15,6 @@ public class SessionLifeCycleEntry extends AbstractEntity {
 	
 	private SessionStatus status;
 	
-	private Date timestamp;
-	
-	
 	public void setSession(Session session) {
 		this.session = session;
 	}
@@ -34,14 +29,6 @@ public class SessionLifeCycleEntry extends AbstractEntity {
 	
 	public SessionStatus getStatus() {
 		return status;
-	}
-	
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
-	}
-	
-	public Date getTimestamp() {
-		return timestamp;
 	}
 	
 }

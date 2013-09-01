@@ -21,7 +21,7 @@ public class PlayerEntry extends AbstractEntity {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private UserAccount account;
 	
-	/** if set - user confirmed participation */
+	/** if not -1 -> user confirmed participation */
 	private BigDecimal stake = new BigDecimal(-1);
 
 	public Session getSession() {
