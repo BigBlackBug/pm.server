@@ -83,7 +83,6 @@ public class SessionLifeCycleBean extends AbstractBean {
 	}
 
 	public void startSession(Session sess) throws PMLifecycleException {
-		log.info(String.format("enabling session(id%d) polling", sess.getId()));
 		sess.setStatus(SessionStatus.SESSION_COMMITED);
 		em.persist(sess);
 		em.flush();

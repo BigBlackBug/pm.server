@@ -39,7 +39,7 @@ public class Session extends AbstractEntity {
 	@JoinColumn(name = "session_id")
 	private List<ScheduledTaskLog> pollingLogs = new ArrayList<ScheduledTaskLog>();
 
-	@OneToMany(mappedBy = "session")
+	@OneToMany(mappedBy = "session", cascade = CascadeType.ALL )
 	//TODO add OptimisticLock exclusion !!! 
 	private Set<PlayerEntry> players = new HashSet<PlayerEntry>();
 

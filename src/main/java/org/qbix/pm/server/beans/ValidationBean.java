@@ -11,7 +11,6 @@ import javax.persistence.PersistenceContext;
 import org.qbix.pm.server.dto.ResultInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMValidationException;
-import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.UserAccount;
 
@@ -88,11 +87,6 @@ public class ValidationBean {
 		//TODO check correсtly!
 		assertTrue(acc.getCurrency().compareTo(sess.getStake()) != -1,
 				"user.currency < session.stake");
-
-		for (PlayerEntry pe : sess.getPlayers()) {
-			assertTrue(!pe.getAccount().getId().equals(uji.getAccountid()),
-					"session already contains this player");
-		}
 
 		return uji;
 	}

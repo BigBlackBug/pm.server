@@ -14,11 +14,11 @@ import javax.persistence.TemporalType;
 public abstract class AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@GeneratedValue
 	@Id
 	private Long id;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
 
@@ -29,17 +29,17 @@ public abstract class AbstractEntity implements Serializable {
 	public Long getId() {
 		return id;
 	}
-	
+
 	protected void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
-	
+
 	public Date getCreationDate() {
 		return creationDate;
 	}
-	
+
 	@PrePersist
-	void setCreationDate(){
+	void setCreationDate() {
 		setCreationDate(new Date());
 	}
 
@@ -48,13 +48,21 @@ public abstract class AbstractEntity implements Serializable {
 		if (obj == null || !(obj instanceof AbstractEntity)) {
 			return false;
 		}
+
+		if (this == obj) {
+			return true;
+		}
+
 		AbstractEntity ae = (AbstractEntity) obj;
 		return ae.getId() == null ? false : ae.getId().equals(getId());
 	}
 
 	@Override
 	public int hashCode() {
-		return id.hashCode();
+		if (id != null) {
+			return id.hashCode();
+		}
+		return super.hashCode();
 	}
-	
+
 }
