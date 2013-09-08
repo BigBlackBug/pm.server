@@ -3,41 +3,38 @@ package org.qbix.pm.server.model;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
 @Entity
 public class UserAccount extends AbstractEntity {
 
 	private static final long serialVersionUID = 2196558275988715559L;
 	
-	public static enum GameAccountType {
-		HON, LOL
-	}
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+	private LoLAccount lolAccount;
 
-	/** GameType - AccId map */
-	@ElementCollection
-	private Map<GameAccountType, Long> gamesAccounts;
+	private BigDecimal balance;
 
-	private BigDecimal currency;
-	
 	public UserAccount() {
 	}
 
-	public void setGamesAccounts(Map<GameAccountType, Long> gamesAccounts) {
-		this.gamesAccounts = gamesAccounts;
+	public LoLAccount getLoLAccount() {
+		return lolAccount;
 	}
 
-	public Map<GameAccountType, Long> getGamesAccounts() {
-		return gamesAccounts;
+	public void setLoLAccount(LoLAccount lolAccount) {
+		this.lolAccount = lolAccount;
 	}
-	
-	public void setCurrency(BigDecimal currency) {
-		this.currency = currency;
+
+	public void setBalance(BigDecimal currency) {
+		this.balance = currency;
 	}
-	
-	public BigDecimal getCurrency() {
-		return currency;
+
+	public BigDecimal getBalance() {
+		return balance;
 	}
 
 }

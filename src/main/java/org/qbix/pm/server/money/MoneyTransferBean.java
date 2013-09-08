@@ -67,7 +67,7 @@ public class MoneyTransferBean extends AbstractBean {
 	private void addToUserAcc(UserAccount account, BigDecimal money,
 			MoneyTransferAction action, Session sess) {
 
-		account.setCurrency(account.getCurrency().add(money));
+		account.setBalance(account.getBalance().add(money));
 
 		MoneyTransferLogEntry mtle = new MoneyTransferLogEntry();
 		mtle.setTargetAccount(account);

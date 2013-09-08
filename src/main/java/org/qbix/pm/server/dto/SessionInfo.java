@@ -39,9 +39,9 @@ public class SessionInfo extends AbstractInfo<Session> {
 
 	private BigDecimal stake;
 
-	private List<PlayerEntryInfo> playerInfos;
+	private List<PlayerEntryInfo> playerEntries;
 
-	private int status ;
+	private Integer status;
 	
 	public SessionInfo() {
 	}
@@ -58,11 +58,11 @@ public class SessionInfo extends AbstractInfo<Session> {
 		return sessid;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 	
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 	
@@ -90,12 +90,12 @@ public class SessionInfo extends AbstractInfo<Session> {
 		return stake;
 	}
 
-	public void setPlayerInfos(List<PlayerEntryInfo> playerInfos) {
-		this.playerInfos = playerInfos;
+	public void setPlayerEntries(List<PlayerEntryInfo> playerInfos) {
+		this.playerEntries = playerInfos;
 	}
 
-	public List<PlayerEntryInfo> getPlayerInfos() {
-		return playerInfos;
+	public List<PlayerEntryInfo> getPlayerEntries() {
+		return playerEntries;
 	}
 
 	@Override
@@ -103,13 +103,17 @@ public class SessionInfo extends AbstractInfo<Session> {
 		Session sess = new Session();
 		if(sessid != null){
 			sess.setId(sessid);
-			return sess;
 		}
-		sess.setType(SessionType.getSessionType(type));
-		sess.setStake(stake);
+		if (type != null) {
+			sess.setType(SessionType.getSessionType(type));
+		}
 
-		if (playerInfos != null) {
-			for (PlayerEntryInfo pei : playerInfos) {
+		if (stake != null) {
+			sess.setStake(stake);
+		}
+
+		if (playerEntries != null) {
+			for (PlayerEntryInfo pei : playerEntries) {
 				PlayerEntry pe = pei.convertToEntity(em);
 				pe.setSession(sess);
 				sess.getPlayers().add(pe);

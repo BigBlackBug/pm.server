@@ -1,0 +1,16 @@
+package org.qbix.pm.server.dto;
+
+public enum NotificationType {
+
+	UPDATE_WITH_GAMEDTO,
+
+	SESSION_PARAMETERS_CHANGED,
+
+	SESSION_STARTED,
+
+	PLAYER_CONFIRMED_STAKE,
+
+	PLAYER_CANCELLED_STAKE,
+
+	PLAYER_DISCONNECTED
+}
