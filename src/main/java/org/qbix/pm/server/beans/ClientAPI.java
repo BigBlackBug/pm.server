@@ -1,14 +1,11 @@
 package org.qbix.pm.server.beans;
 
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.qbix.pm.server.dto.PlayerEntryInfo;
 import org.qbix.pm.server.dto.ResultInfo;
 import org.qbix.pm.server.dto.SessionInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;

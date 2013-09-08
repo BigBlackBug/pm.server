@@ -14,7 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
-import javax.persistence.Version;
 
 @Entity
 public class Session extends AbstractEntity {
@@ -40,17 +39,12 @@ public class Session extends AbstractEntity {
 	private List<ScheduledTaskLog> pollingLogs = new ArrayList<ScheduledTaskLog>();
 
 	@OneToMany(mappedBy = "session", cascade = CascadeType.ALL )
-	//TODO add OptimisticLock exclusion !!! 
 	private Set<PlayerEntry> players = new HashSet<PlayerEntry>();
 
 	@OneToOne
 	private UserAccount initiator;
 	
 	private BigDecimal stake;
-
-	/** For optimistic locking */
-	@Version
-	private Long version;
 
 	public Session() {
 	}
@@ -85,14 +79,6 @@ public class Session extends AbstractEntity {
 
 	public List<SessionLifeCycleEntry> getLifeCycleEntries() {
 		return lifeCycleEntries;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-
-	public Long getVersion() {
-		return version;
 	}
 
 	public Set<PlayerEntry> getPlayers() {

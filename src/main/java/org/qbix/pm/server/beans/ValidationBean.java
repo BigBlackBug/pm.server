@@ -49,7 +49,6 @@ public class ValidationBean {
 
 	public Session validateSessionBeforeRegister(Session sess)
 			throws PMValidationException {
-		notNull(sess, "session = null");
 		notNull(sess.getVictoryCriteria(), "session.criteria = null");
 		notNull(sess.getType(), "session.type = null");
 		notNull(sess.getStake(), "session.stake = null");
@@ -60,14 +59,9 @@ public class ValidationBean {
 		sess.setId(null);
 		return sess;
 	}
-	
-	public Session validateSessionBeforeUpdating(Session sess) throws PMValidationException {
-		notNull(sess, "session = null");
-		notNull(sess.getId(), "session_id = null");
 
-		sess = em.find(Session.class, sess.getId());
-		notNull(sess, "No session with id = " + sess.getId());
-		
+	public Session validateSessionBeforeUpdating(Session sess)
+			throws PMValidationException {
 		BigDecimal stake = sess.getStake();
 		if (stake != null) {
 			assertTrue(stake.compareTo(new BigDecimal(0)) != -1,
@@ -75,55 +69,32 @@ public class ValidationBean {
 		}
 		return sess;
 	}
-	
-	//TODO validate players
-	public Session validateSessionBeforeUpdatingParticipants(Session sess) throws PMValidationException {
-		notNull(sess, "session = null");
-		notNull(sess.getId(), "session_id = null");
-		sess = em.find(Session.class, sess.getId());
-		notNull(sess, "No session with id = " + sess.getId());
-		notNull(sess.getPlayers(), "session.players = null");
-		return sess;
-	}
 
-	public Session validateSessionBeforeConfStart(Session sess)
+	// TODO validate players
+	public Session validateSessionBeforeUpdatingParticipants(Session sess)
 			throws PMValidationException {
-		notNull(sess, "session = null");
-		notNull(sess.getId(), "session.id = null");
-
 		sess = em.find(Session.class, sess.getId());
-		notNull(sess, "No session with id = " + sess.getId());
-
+		notNull(sess.getPlayers(), "session.players = null");
 		return sess;
 	}
 
 	public UserJoinInfo validateUserJoinInfoBeforeAdding(UserJoinInfo uji)
 			throws PMValidationException {
-		notNull(uji);
-		notNull(uji.getSessid(), "userJoinInfo.sessid = null");
-
-		Session sess = em.find(Session.class, uji.getSessid());
-		notNull(sess, "No session with id = " + uji.getSessid());
-
 		notNull(uji.getAccountid());
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
 		notNull(acc, "No userAccount with id = " + uji.getAccountid());
 
-		//TODO check correсtly!
+		Session sess = em.find(Session.class, uji.getSessid());
+		
+		// TODO check correсtly!
 		assertTrue(acc.getBalance().compareTo(sess.getStake()) != -1,
 				"user.currency < session.stake");
 
 		return uji;
 	}
-	
+
 	public UserJoinInfo validateUserJoinInfoBeforeDisconnecting(UserJoinInfo uji)
 			throws PMValidationException {
-		notNull(uji);
-		notNull(uji.getSessid(), "userJoinInfo.sessid = null");
-
-		Session sess = em.find(Session.class, uji.getSessid());
-		notNull(sess, "No session with id = " + uji.getSessid());
-
 		notNull(uji.getAccountid());
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
 		notNull(acc, "No userAccount with id = " + uji.getAccountid());
@@ -133,27 +104,16 @@ public class ValidationBean {
 
 	public Session validateSessionBeforeStart(Session sess)
 			throws PMValidationException {
-		notNull(sess, "session = null");
-		notNull(sess.getId(), "session.id = null");
-
-		Long sessId = sess.getId();
-		sess = em.find(Session.class, sess.getId());
-		notNull(sess, "No session with id = " + sessId);
-
-//		assertTrue(sess.getStatus() == SessionStatus.READY_FOR_POLLING,
-//				String.format("session(id%d).status != 'READY_FOR_POLLING'",
-//						sessId));
+		// assertTrue(sess.getStatus() == SessionStatus.READY_FOR_POLLING,
+		// String.format("session(id%d).status != 'READY_FOR_POLLING'",
+		// sessId));
 
 		return sess;
 	}
 
-	public ResultInfo validateResult(ResultInfo ri) throws PMValidationException{
+	public ResultInfo validateResult(ResultInfo ri)
+			throws PMValidationException {
 		notNull(ri);
-		Session sess = em.find(Session.class, ri.getSessid());
-		notNull(sess, "No session with id = " + sess.getId());
-		
-		//TODO session status check
-		
 		return ri;
 	}
 

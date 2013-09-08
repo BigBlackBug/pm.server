@@ -7,7 +7,9 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.validation.ValidationException;
 
 import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.dto.Notification;
@@ -20,8 +22,6 @@ import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.util.collection.CollectionUtils;
 import org.qbix.pm.server.util.collection.returnfilters.ReturnFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
@@ -31,9 +31,6 @@ import com.google.gson.Gson;
 public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 		ClientAPI {
 
-	private static Logger log = LoggerFactory
-			.getLogger(SessionFacadeBean.class);
-
 	@PersistenceContext(unitName = "pm")
 	private EntityManager em;
 
@@ -42,10 +39,10 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 
 	@EJB
 	private SessionLifeCycleBean lifecycleBean;
-	
+
 	@EJB
 	private NotificationBean notifier;
-	
+
 	@Override
 	public Long registerSession(SessionInfo si) throws PMException {
 		Session newSession = si.convertToEntity(em);
@@ -56,6 +53,7 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 	@Override
 	public Long updateSession(SessionInfo si) throws PMException {
 		Session newSession = si.convertToEntity(em);
+		lockEntity(Session.class, si.getSessid());
 		newSession = validationBean.validateSessionBeforeUpdating(newSession);
 		Long updateSession = lifecycleBean.updateSession(newSession);
 		Gson gson = new Gson();
@@ -65,10 +63,11 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 				getAccountIds(newSession), json));
 		return updateSession;
 	}
-	
+
 	@Override
 	public Long updateParticipants(SessionInfo si) throws PMException {
 		Session newSession = si.convertToEntity(em);
+		lockEntity(Session.class, si.getSessid());
 		newSession = validationBean
 				.validateSessionBeforeUpdatingParticipants(newSession);
 		Long updateSession = lifecycleBean.updateParicipants(newSession);
@@ -76,9 +75,10 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 				getAccountIds(newSession), "session_id", newSession.getId()));
 		return updateSession;
 	}
-	
+
 	@Override
 	public void playerDisconnected(UserJoinInfo uji) throws PMException {
+		lockEntity(Session.class, uji.getSessid());
 		uji = validationBean.validateUserJoinInfoBeforeDisconnecting(uji);
 		lifecycleBean.playerDisconnected(uji);
 		Session session = em.find(Session.class, uji.getSessid());
@@ -88,6 +88,7 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 
 	@Override
 	public void confirmParticipation(UserJoinInfo uji) throws PMException {
+		lockEntity(Session.class, uji.getSessid());
 		uji = validationBean.validateUserJoinInfoBeforeAdding(uji);
 		lifecycleBean.confirmParticipation(uji);
 		Session session = em.find(Session.class, uji.getSessid());
@@ -98,9 +99,10 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 
 	@Override
 	public void cancelParticipation(UserJoinInfo uji) throws PMException {
+		lockEntity(Session.class, uji.getSessid());
 		uji = validationBean.validateUserJoinInfoBeforeDisconnecting(uji);
 		lifecycleBean.cancelParticipation(uji);
-		
+
 		Session session = em.find(Session.class, uji.getSessid());
 		notifier.notify(new Notification(
 				NotificationType.PLAYER_CANCELLED_STAKE,
@@ -110,6 +112,7 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 	@Override
 	public void startSession(SessionInfo si) throws PMException {
 		Session session = si.convertToEntity(em);
+		lockEntity(Session.class, si.getSessid());
 		session = validationBean.validateSessionBeforeStart(session);
 		lifecycleBean.startSession(session);
 		notifier.notify(new Notification(NotificationType.SESSION_STARTED,
@@ -118,19 +121,31 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 
 	@Override
 	public void resolveResult(ResultInfo ri) throws PMException {
+		lockEntity(Session.class, ri.getSessid());
 		ri = validationBean.validateResult(ri);
 		lifecycleBean.resolveResultAndCloseSession(ri);
 	}
-	
-	private List<Long> getAccountIds(Session session){
-		return CollectionUtils.filterEntities(
-			session.getPlayers(),
-			new ReturnFilter<PlayerEntry, Long>() {
-			@Override
-				public Long returns(PlayerEntry entity) {
-					return entity.getAccount().getId();
-				}
-			}).toList();
+
+	private <T> void lockEntity(Class<T> entityClass, Object id) {
+		if (id == null) {
+			throw new ValidationException("Entity id cant be null");
+		}
+
+		T entity = em.find(entityClass, id, LockModeType.PESSIMISTIC_WRITE);
+
+		if (entity == null) {
+			throw new ValidationException("No entity with id = " + id);
+		}
+	}
+
+	private List<Long> getAccountIds(Session session) {
+		return CollectionUtils.filterEntities(session.getPlayers(),
+				new ReturnFilter<PlayerEntry, Long>() {
+					@Override
+					public Long returns(PlayerEntry entity) {
+						return entity.getAccount().getId();
+					}
+				}).toList();
 	}
 
 }

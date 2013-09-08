@@ -1,10 +1,8 @@
 package org.qbix.pm.server.model;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
