@@ -14,6 +14,8 @@ import javax.validation.ValidationException;
 import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.dto.Notification;
 import org.qbix.pm.server.dto.NotificationType;
+import org.qbix.pm.server.dto.ParticipantsInfo;
+import org.qbix.pm.server.dto.ParticipantsReturnInfo;
 import org.qbix.pm.server.dto.ResultInfo;
 import org.qbix.pm.server.dto.SessionInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;
@@ -65,15 +67,15 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 	}
 
 	@Override
-	public Long updateParticipants(SessionInfo si) throws PMException {
-		Session newSession = si.convertToEntity(em);
-		lockEntity(Session.class, si.getSessid());
-		newSession = validationBean
-				.validateSessionBeforeUpdatingParticipants(newSession);
-		Long updateSession = lifecycleBean.updateParicipants(newSession);
+	public Long updateLoLParticipants(ParticipantsInfo info) throws PMException {
+		Session session = lockEntity(Session.class, info.getSessionId());
+		info = validationBean.validateParticipantsInfo(info);
+		ParticipantsReturnInfo returnInfo = lifecycleBean.updateLoLParicipants(info);
 		notifier.notify(new Notification(NotificationType.UPDATE_WITH_GAMEDTO,
-				getAccountIds(newSession), "session_id", newSession.getId()));
-		return updateSession;
+				getAccountIds(session), new Gson().toJson(returnInfo,
+						ParticipantsReturnInfo.class)));
+		
+		return session.getId();
 	}
 
 	@Override
@@ -126,7 +128,7 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 		lifecycleBean.resolveResultAndCloseSession(ri);
 	}
 
-	private <T> void lockEntity(Class<T> entityClass, Object id) {
+	private <T> T lockEntity(Class<T> entityClass, Object id) {
 		if (id == null) {
 			throw new ValidationException("Entity id cant be null");
 		}
@@ -136,16 +138,17 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 		if (entity == null) {
 			throw new ValidationException("No entity with id = " + id);
 		}
+		return entity;
 	}
 
 	private List<Long> getAccountIds(Session session) {
 		return CollectionUtils.filterEntities(session.getPlayers(),
-				new ReturnFilter<PlayerEntry, Long>() {
-					@Override
-					public Long returns(PlayerEntry entity) {
-						return entity.getAccount().getId();
-					}
-				}).toList();
+			new ReturnFilter<PlayerEntry, Long>() {
+				@Override
+				public Long returns(PlayerEntry entity) {
+					return entity.getAccount().getId();
+				}
+			}).toList();
 	}
 
 }

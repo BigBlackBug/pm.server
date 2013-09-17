@@ -6,6 +6,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.qbix.pm.server.dto.ParticipantsInfo;
 import org.qbix.pm.server.dto.ResultInfo;
 import org.qbix.pm.server.dto.SessionInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;
@@ -48,10 +49,10 @@ public interface ClientAPI {
 	// {"accountId" : 1, "team":0}
 	// }
 	@POST
-	@Path("/update_participants")
+	@Path("/update_lol_participants")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Long updateParticipants(SessionInfo participants) throws PMException;
+	public Long updateLoLParticipants(ParticipantsInfo participants) throws PMException;
 	
 	// http://localhost:8080/pm.server/rs/leave_game
 	// {

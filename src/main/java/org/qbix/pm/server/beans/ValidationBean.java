@@ -1,16 +1,20 @@
 package org.qbix.pm.server.beans;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
+import org.qbix.pm.server.dto.ParticipantsInfo;
 import org.qbix.pm.server.dto.ResultInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMValidationException;
+import org.qbix.pm.server.model.LoLAccount;
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.UserAccount;
 
@@ -43,6 +47,11 @@ public class ValidationBean {
 			throw new PMValidationException(mess);
 		}
 	}
+	
+	public static void fail(String message)
+			throws PMValidationException {
+		throw new PMValidationException(message);
+	}
 
 	@PersistenceContext(unitName = "pm")
 	private EntityManager em;
@@ -70,12 +79,27 @@ public class ValidationBean {
 		return sess;
 	}
 
-	// TODO validate players
-	public Session validateSessionBeforeUpdatingParticipants(Session sess)
+	public ParticipantsInfo validateParticipantsInfo(ParticipantsInfo info)
 			throws PMValidationException {
-		sess = em.find(Session.class, sess.getId());
-		notNull(sess.getPlayers(), "session.players = null");
-		return sess;
+		List<Long> team0 = info.getTeamOne();
+		validateTeam(team0);
+		List<Long> team1 = info.getTeamTwo();
+		validateTeam(team1);
+		return info;
+	}
+	
+	private void validateTeam(List<Long> team) throws PMValidationException {
+		for (Long lolAccountID : team) {
+			try {
+				em.createQuery(
+						"select acc from LoLAccount acc where acc.accountID = :id",
+						LoLAccount.class).setParameter("id", lolAccountID)
+						.getSingleResult();
+			} catch (NoResultException ex) {
+				fail(String.format("no account with lolaccountid = %d",
+						lolAccountID));
+			}
+		}
 	}
 
 	public UserJoinInfo validateUserJoinInfoBeforeAdding(UserJoinInfo uji)

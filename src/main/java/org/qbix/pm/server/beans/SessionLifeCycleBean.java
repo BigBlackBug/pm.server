@@ -2,8 +2,11 @@ package org.qbix.pm.server.beans;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -12,7 +15,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
+import org.qbix.pm.server.dto.ParticipantsInfo;
+import org.qbix.pm.server.dto.ParticipantsReturnInfo;
+import org.qbix.pm.server.dto.ParticipantsReturnInfo.Entry;
 import org.qbix.pm.server.dto.ResultInfo;
 import org.qbix.pm.server.dto.UserJoinInfo;
 import org.qbix.pm.server.exceptions.PMLifecycleException;
@@ -77,17 +84,81 @@ public class SessionLifeCycleBean extends AbstractBean {
 		return session.getId();
 	}
 
-	public Long updateParicipants(Session session) {
-		Session managedSession = em
-				.getReference(Session.class, session.getId());
+	public ParticipantsReturnInfo updateLoLParicipants(ParticipantsInfo si) {
+		Session session = em.getReference(Session.class, si.getSessionId());
 
-		Set<PlayerEntry> managedPlayers = managedSession.getPlayers();
-		managedPlayers.addAll(session.getPlayers());
+		List<Long> teamOne = si.getTeamOne();
+		List<Long> teamTwo = si.getTeamTwo();
+
+		Set<PlayerEntry> players = session.getPlayers();
+
+		Set<PlayerEntry> toRemove = new HashSet<>();
+		for (PlayerEntry pe : players) {
+			Long loAaccountId = pe.getAccount().getLoLAccount().getAccountID();
+			if (teamOne.contains(loAaccountId)) {
+				pe.setTeam(SessionTeam.TEAM_0);
+				teamOne.remove(loAaccountId);
+			} else if (teamTwo.contains(loAaccountId)) {
+				pe.setTeam(SessionTeam.TEAM_1);
+				teamTwo.remove(loAaccountId);
+			} else {
+				toRemove.add(pe);
+			}
+		}
+
+		players.removeAll(toRemove);
+
+		addNewEntries(session, players, teamOne, SessionTeam.TEAM_0);
+		addNewEntries(session, players, teamTwo, SessionTeam.TEAM_1);
 
 		log.info(String.format("session(id%d) updated participants.",
 				session.getId()));
 
-		return session.getId();
+		return getParticipantsReturnInfo(session, players);
+	}
+
+	private ParticipantsReturnInfo getParticipantsReturnInfo(Session session,
+			Set<PlayerEntry> players) {
+		ParticipantsReturnInfo info = new ParticipantsReturnInfo();
+		info.setSessionId(session.getId());
+		for (PlayerEntry playerEntry : players) {
+			SessionTeam team = playerEntry.getTeam();
+			UserAccount account = playerEntry.getAccount();
+			Long lolAccountID = account.getLoLAccount().getAccountID();
+			Long pmAccountID = account.getId();
+			String nickName = account.getNickName();
+			if (team == SessionTeam.TEAM_0) {
+				info.putToTeamOne(lolAccountID,
+						new Entry(pmAccountID, nickName));
+			} else {
+				info.putToTeamTwo(lolAccountID,
+						new Entry(pmAccountID, nickName));
+			}
+		}
+		return info;
+	}
+
+	private void addNewEntries(Session session,
+			Set<PlayerEntry> managedPlayers, List<Long> lolAccountIDs,
+			SessionTeam team) {
+ 		for (Long id : lolAccountIDs) {
+			PlayerEntry entry = new PlayerEntry();
+			entry.setAccount(getUserAccountWithLolAccountID(id));
+			entry.setSession(session);
+			entry.setStake(new BigDecimal(-1));
+			entry.setTeam(team);
+			managedPlayers.add(entry);
+		}
+	}
+	
+	private UserAccount getUserAccountWithLolAccountID(Long lolAccountId) {
+		TypedQuery<UserAccount> query = em
+				.createQuery(
+						"select u from UserAccount u join u.lolAccount where u.lolAccount.accountID = :id",
+						UserAccount.class).setParameter("id", lolAccountId);
+		//TODO try catch notunique
+		UserAccount acc = query.getSingleResult();
+		return acc;
 	}
 
 	public void playerDisconnected(UserJoinInfo uji) {
