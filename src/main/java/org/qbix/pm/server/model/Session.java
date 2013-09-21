@@ -34,10 +34,6 @@ public class Session extends AbstractEntity {
 	@OrderBy("creationDate")
 	private List<SessionLifeCycleEntry> lifeCycleEntries = new ArrayList<SessionLifeCycleEntry>();
 
-	@OneToMany(cascade = { CascadeType.REMOVE })
-	@JoinColumn(name = "session_id")
-	private List<ScheduledTaskLog> pollingLogs = new ArrayList<ScheduledTaskLog>();
-
 	@OneToMany(mappedBy = "session", cascade = CascadeType.ALL )
 	private Set<PlayerEntry> players = new HashSet<PlayerEntry>();
 
@@ -87,14 +83,6 @@ public class Session extends AbstractEntity {
 
 	public void setPlayers(Set<PlayerEntry> players) {
 		this.players = players;
-	}
-
-	public List<ScheduledTaskLog> getPollingLogs() {
-		return pollingLogs;
-	}
-
-	public void setPollingLogs(List<ScheduledTaskLog> pollingLogs) {
-		this.pollingLogs = pollingLogs;
 	}
 
 	public BigDecimal getStake() {

@@ -6,12 +6,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceContext;
-import javax.validation.ValidationException;
 
 import org.qbix.pm.server.annotaions.Traceable;
+import org.qbix.pm.server.annotaions.Traceable.LogLevel;
 import org.qbix.pm.server.dto.Notification;
 import org.qbix.pm.server.dto.NotificationType;
 import org.qbix.pm.server.dto.ParticipantsInfo;
@@ -29,12 +26,9 @@ import com.google.gson.Gson;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-@Traceable
+@Traceable(logLevel = LogLevel.DEBUG)
 public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 		ClientAPI {
-
-	@PersistenceContext(unitName = "pm")
-	private EntityManager em;
 
 	@EJB
 	private ValidationBean validationBean;
@@ -70,7 +64,7 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 	public Long updateLoLParticipants(ParticipantsInfo info) throws PMException {
 		Session session = lockEntity(Session.class, info.getSessionId());
 		info = validationBean.validateParticipantsInfo(info);
-		ParticipantsReturnInfo returnInfo = lifecycleBean.updateLoLParicipants(info);
+		ParticipantsReturnInfo returnInfo = lifecycleBean.updateLoLParticipants(info);
 		notifier.notify(new Notification(NotificationType.UPDATE_WITH_GAMEDTO,
 				getAccountIds(session), new Gson().toJson(returnInfo,
 						ParticipantsReturnInfo.class)));
@@ -126,19 +120,6 @@ public class SessionFacadeBean extends AbstractBean implements SessionFacade,
 		lockEntity(Session.class, ri.getSessid());
 		ri = validationBean.validateResult(ri);
 		lifecycleBean.resolveResultAndCloseSession(ri);
-	}
-
-	private <T> T lockEntity(Class<T> entityClass, Object id) {
-		if (id == null) {
-			throw new ValidationException("Entity id cant be null");
-		}
-
-		T entity = em.find(entityClass, id, LockModeType.PESSIMISTIC_WRITE);
-
-		if (entity == null) {
-			throw new ValidationException("No entity with id = " + id);
-		}
-		return entity;
 	}
 
 	private List<Long> getAccountIds(Session session) {

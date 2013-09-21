@@ -1,13 +1,10 @@
 package org.qbix.pm.server.money;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.beans.AbstractBean;
@@ -26,9 +23,6 @@ public class MoneyTransferBean extends AbstractBean {
 	private static final Logger log = LoggerFactory
 			.getLogger(MoneyTransferBean.class);
 
-	@PersistenceContext(unitName = "pm")
-	private EntityManager em;
-
 	public void transfer(SimpleMoneyTransferInfo mti)
 			throws PMTransferMoneyException {
 
@@ -39,7 +33,7 @@ public class MoneyTransferBean extends AbstractBean {
 		Session sess = em.find(Session.class, mti.getSessionId());
 
 		for (Long acc : mti.getTransferDetails().keySet()) {
-			UserAccount ua = em.find(UserAccount.class, acc);
+			UserAccount ua = lockEntity(UserAccount.class, acc);
 			addToUserAcc(ua, mti.getTransferDetails().get(acc),
 					MoneyTransferAction.SESSION_RESULT_RESOLVING, sess);
 		}
@@ -73,7 +67,6 @@ public class MoneyTransferBean extends AbstractBean {
 		mtle.setTargetAccount(account);
 		mtle.setCurrency(money);
 		mtle.setAction(action);
-		mtle.setTimestamp(new Date());
 		mtle.setSession(sess);
 		em.persist(mtle);
 	}

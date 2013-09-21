@@ -1,14 +1,7 @@
 package org.qbix.pm.server.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-
-import org.qbix.pm.server.model.PlayerEntry;
-import org.qbix.pm.server.model.Session;
-import org.qbix.pm.server.model.SessionType;
 
 public class ParticipantsInfo implements Serializable {
 

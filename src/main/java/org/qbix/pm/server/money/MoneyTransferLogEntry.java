@@ -1,7 +1,6 @@
 package org.qbix.pm.server.money;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,8 +8,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.qbix.pm.server.model.AbstractEntity;
@@ -38,10 +35,6 @@ public class MoneyTransferLogEntry extends AbstractEntity {
 
 	@NotNull
 	private BigDecimal currency;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@NotNull
-	private Date timestamp;
 
 	/** can be null */
 	@ManyToOne
@@ -73,14 +66,6 @@ public class MoneyTransferLogEntry extends AbstractEntity {
 
 	public BigDecimal getCurrency() {
 		return currency;
-	}
-
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
-	}
-
-	public Date getTimestamp() {
-		return timestamp;
 	}
 
 	public void setSession(Session session) {

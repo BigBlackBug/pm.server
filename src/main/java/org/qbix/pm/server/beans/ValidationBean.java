@@ -71,11 +71,6 @@ public class ValidationBean {
 
 	public Session validateSessionBeforeUpdating(Session sess)
 			throws PMValidationException {
-		BigDecimal stake = sess.getStake();
-		if (stake != null) {
-			assertTrue(stake.compareTo(new BigDecimal(0)) != -1,
-					"session.stake <= 0");
-		}
 		return sess;
 	}
 

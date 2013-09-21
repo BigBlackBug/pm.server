@@ -2,19 +2,15 @@ package org.qbix.pm.server.beans;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import org.qbix.pm.server.dto.ParticipantsInfo;
@@ -27,7 +23,6 @@ import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.Session;
 import org.qbix.pm.server.model.SessionStatus;
 import org.qbix.pm.server.model.SessionTeam;
-import org.qbix.pm.server.model.SessionType;
 import org.qbix.pm.server.model.UserAccount;
 import org.qbix.pm.server.model.VictoryCriteria;
 import org.qbix.pm.server.money.MoneyTransferBean;
@@ -41,9 +36,6 @@ public class SessionLifeCycleBean extends AbstractBean {
 
 	private static Logger log = LoggerFactory
 			.getLogger(SessionLifeCycleBean.class);
-
-	@PersistenceContext(unitName = "pm")
-	private EntityManager em;
 
 	@EJB
 	private SessionFacade sessionFacade;
@@ -73,19 +65,14 @@ public class SessionLifeCycleBean extends AbstractBean {
 		if (vc != null) {
 			managedSession.setVictoryCriteria(vc);
 		}
-
-		SessionType type = session.getType();
-		if (type != null) {
-			managedSession.setType(type);
-		}
-
+		
 		log.info(String.format("session(id%d) updated.", session.getId()));
 
 		return session.getId();
 	}
 
-	public ParticipantsReturnInfo updateLoLParicipants(ParticipantsInfo si) {
-		Session session = em.getReference(Session.class, si.getSessionId());
+	public ParticipantsReturnInfo updateLoLParticipants(ParticipantsInfo si) {
+		Session session = em.find(Session.class, si.getSessionId());
 
 		List<Long> teamOne = si.getTeamOne();
 		List<Long> teamTwo = si.getTeamTwo();
@@ -141,7 +128,7 @@ public class SessionLifeCycleBean extends AbstractBean {
 	private void addNewEntries(Session session,
 			Set<PlayerEntry> managedPlayers, List<Long> lolAccountIDs,
 			SessionTeam team) {
- 		for (Long id : lolAccountIDs) {
+		for (Long id : lolAccountIDs) {
 			PlayerEntry entry = new PlayerEntry();
 			entry.setAccount(getUserAccountWithLolAccountID(id));
 			entry.setSession(session);
@@ -150,13 +137,14 @@ public class SessionLifeCycleBean extends AbstractBean {
 			managedPlayers.add(entry);
 		}
 	}
-	
+
 	private UserAccount getUserAccountWithLolAccountID(Long lolAccountId) {
-		TypedQuery<UserAccount> query = em
-				.createQuery(
-						"select u from UserAccount u join u.lolAccount where u.lolAccount.accountID = :id",
-						UserAccount.class).setParameter("id", lolAccountId);
-		//TODO try catch notunique
+		String q = "SELECT u FROM" + UserAccount.class.getName()
+				+ " u JOIN u.lolAccount AS lolacc where lolacc.accountID = :id";
+
+		TypedQuery<UserAccount> query = em.createQuery(q, UserAccount.class)
+				.setParameter("id", lolAccountId);
+
 		UserAccount acc = query.getSingleResult();
 		return acc;
 	}
@@ -178,7 +166,6 @@ public class SessionLifeCycleBean extends AbstractBean {
 	}
 
 	public void confirmParticipation(UserJoinInfo uji) {
-
 		Session sess = em.find(Session.class, uji.getSessid());
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
 
