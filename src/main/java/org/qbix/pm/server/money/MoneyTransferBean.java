@@ -1,7 +1,6 @@
 package org.qbix.pm.server.money;
 
 import java.math.BigDecimal;
-
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -10,6 +9,7 @@ import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.beans.AbstractBean;
 import org.qbix.pm.server.exceptions.PMTransferMoneyException;
 import org.qbix.pm.server.model.Game;
+import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.UserAccount;
 import org.qbix.pm.server.money.MoneyTransferLogEntry.MoneyTransferAction;
 import org.slf4j.Logger;
@@ -54,6 +54,23 @@ public class MoneyTransferBean extends AbstractBean {
 		userAcc.setInGameCash(new BigDecimal(0));
 		addToUserAcc(userAcc, stake,
 				MoneyTransferAction.CANCEL_GAME_PLAYER_PARTICIPATION, game);
+	}
+
+	public void refreshPlayersList(Game game) {
+		BigDecimal oldStake = game.getStake();
+		for (PlayerEntry pe : game.getPlayers()) {
+			UserAccount acc = lockEntity(UserAccount.class, pe.getAccount()
+					.getID());
+			
+			/* если чел уже успел согласится */
+			if(!pe.getStake().equals(new BigDecimal(-1))){
+				pe.setStake(new BigDecimal(-1));
+				
+				acc.setInGameCash(new BigDecimal(0));
+				
+				addToUserAcc(acc, oldStake, MoneyTransferAction.REFRESH_PLAYERS_PARTICIPATION, game);
+			}
+		}
 	}
 
 	/** userAcc entity should be locked */

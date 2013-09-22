@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -51,31 +50,32 @@ public class GameLifeCycleBean extends AbstractBean {
 	public Long updateGame(Game game) {
 		Game managedGame = em.find(Game.class, game.getID());
 
-		BigDecimal stake = game.getStake();
-		if (stake != null) {
-			managedGame.setStake(stake);
+		if (game.getPlayers() != null) {
+			updatePlayers(game.getID(), managedGame,
+					game);
 		}
-
+		
 		VictoryCriteria vc = game.getVictoryCriteria();
 		if (vc != null) {
 			managedGame.setVictoryCriteria(vc);
 		}
-		
-		if(game.getPlayers() != null){
-			updatePlayers(game.getID(), game.getPlayers());
-		}
 
+		BigDecimal stake = game.getStake();
+		if (stake != null) {
+			managedGame.setStake(stake);
+		}
+		
 		log.info(String.format("game(id%d) updated.", game.getID()));
 
 		return game.getID();
 	}
 
-	private void updatePlayers(Long gameId, Set<PlayerEntry> newPlayers){
-		Game managedGame = em.find(Game.class, gameId);
-		managedGame.getPlayers().clear();
-		managedGame.getPlayers().addAll(newPlayers);
+	private void updatePlayers(Long gameId, Game oldGame,
+			Game newGame) {
+		moneyTransfer.refreshPlayersList(oldGame);
+		oldGame.getPlayers().clear();
+		oldGame.getPlayers().addAll(newGame.getPlayers());
 	}
-	
 
 	public void playerDisconnected(UserJoinDTO uji) {
 		Game game = em.find(Game.class, uji.getSessid());
@@ -103,7 +103,7 @@ public class GameLifeCycleBean extends AbstractBean {
 				break;
 			}
 		}
-		
+
 		moneyTransfer.userGameParticipation(game, acc);
 
 		if (checkIsSessionIsReadyToStart(game)) {
@@ -114,7 +114,7 @@ public class GameLifeCycleBean extends AbstractBean {
 				"user(id%d) confirmed participation is game(id%d)",
 				uji.getAccountid(), uji.getSessid()));
 	}
-	
+
 	public void cancelParticipation(UserJoinDTO uji) {
 		Game game = em.find(Game.class, uji.getSessid());
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
@@ -124,7 +124,7 @@ public class GameLifeCycleBean extends AbstractBean {
 				break;
 			}
 		}
-		
+
 		moneyTransfer.calcelUserGameParticipation(game, acc);
 
 		log.info(String.format(
