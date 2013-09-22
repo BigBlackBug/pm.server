@@ -67,7 +67,7 @@ public class GameFacadeBean extends AbstractBean implements GameFacade,
 
 	@Override
 	public void playerDisconnected(UserJoinDTO uji) throws PMException {
-		Game game = lockEntity(Game.class, uji.getSessid());
+		Game game = lockEntity(Game.class, uji.getGameId());
 		uji = validationBean.validateUserJoinInfoBeforeDisconnecting(uji);
 		lifecycleBean.playerDisconnected(uji);
 		notifier.notifyWithJMS(new Notification(
@@ -77,7 +77,7 @@ public class GameFacadeBean extends AbstractBean implements GameFacade,
 
 	@Override
 	public void confirmParticipation(UserJoinDTO uji) throws PMException {
-		Game game = lockEntity(Game.class, uji.getSessid());
+		Game game = lockEntity(Game.class, uji.getGameId());
 		uji = validationBean.validateUserJoinInfoBeforeAdding(uji);
 		lifecycleBean.confirmParticipation(uji);
 		notifier.notifyWithJMS(new Notification(
@@ -87,7 +87,7 @@ public class GameFacadeBean extends AbstractBean implements GameFacade,
 
 	@Override
 	public void cancelParticipation(UserJoinDTO uji) throws PMException {
-		Game game = lockEntity(Game.class, uji.getSessid());
+		Game game = lockEntity(Game.class, uji.getGameId());
 		uji = validationBean.validateUserJoinInfoBeforeDisconnecting(uji);
 		lifecycleBean.cancelParticipation(uji);
 

@@ -14,27 +14,27 @@ public class UserJoinDTO implements Serializable {
 
 	private static final long serialVersionUID = 7025917910203033553L;
 
-	private Long sessid;
+	private Long gameId;
 
-	private Long accountid;
+	private Long accountId;
 
 	public UserJoinDTO() {
 	}
 
-	public void setSessid(Long sessid) {
-		this.sessid = sessid;
+	public void setGameId(Long sessid) {
+		this.gameId = sessid;
 	}
 
-	public Long getSessid() {
-		return sessid;
+	public Long getGameId() {
+		return gameId;
 	}
 	
-	public void setAccountid(Long accountid) {
-		this.accountid = accountid;
+	public void setAccountId(Long accountid) {
+		this.accountId = accountid;
 	}
 	
 	public Long getAccountid() {
-		return accountid;
+		return accountId;
 	}
 	
 }

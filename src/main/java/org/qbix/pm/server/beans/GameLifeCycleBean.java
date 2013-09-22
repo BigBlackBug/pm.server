@@ -80,7 +80,7 @@ public class GameLifeCycleBean extends AbstractBean {
 	}
 
 	public void playerDisconnected(UserJoinDTO uji) {
-		Game game = em.find(Game.class, uji.getSessid());
+		Game game = em.find(Game.class, uji.getGameId());
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
 
 		Iterator<PlayerEntry> it = game.getPlayers().iterator();
@@ -92,11 +92,11 @@ public class GameLifeCycleBean extends AbstractBean {
 			}
 		}
 		log.info(String.format("user(id%d) disconnected from game(id%d)",
-				uji.getAccountid(), uji.getSessid()));
+				uji.getAccountid(), uji.getGameId()));
 	}
 
 	public void confirmParticipation(UserJoinDTO uji) {
-		Game game = em.find(Game.class, uji.getSessid());
+		Game game = em.find(Game.class, uji.getGameId());
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
 
 		for (PlayerEntry pe : game.getPlayers()) {
@@ -114,11 +114,11 @@ public class GameLifeCycleBean extends AbstractBean {
 
 		log.info(String.format(
 				"user(id%d) confirmed participation is game(id%d)",
-				uji.getAccountid(), uji.getSessid()));
+				uji.getAccountid(), uji.getGameId()));
 	}
 
 	public void cancelParticipation(UserJoinDTO uji) {
-		Game game = em.find(Game.class, uji.getSessid());
+		Game game = em.find(Game.class, uji.getGameId());
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
 		for (PlayerEntry pe : game.getPlayers()) {
 			if (pe.getAccount().getID().equals(uji.getAccountid())) {
@@ -131,7 +131,7 @@ public class GameLifeCycleBean extends AbstractBean {
 
 		log.info(String.format(
 				"user(id%d) cancelled participation is game(id%d)",
-				uji.getAccountid(), uji.getSessid()));
+				uji.getAccountid(), uji.getGameId()));
 	}
 
 	private boolean checkIsSessionIsReadyToStart(Game sess) {

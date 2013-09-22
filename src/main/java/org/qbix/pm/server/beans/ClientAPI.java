@@ -70,14 +70,14 @@ public interface ClientAPI {
 	// http://localhost:8080/pm.server/rs/startsess
 	// { "sessid" : 249 }
 	@POST
-	@Path("/startsess")
+	@Path("/start_game")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void startGame(GameDTO si) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/resolveresult
 	// { "sessid" : 258, "winner" : 0 }
 	@POST
-	@Path("/resolveresult")
+	@Path("/resolve_result")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void resolveResult(ResultInfo si) throws PMException;
 

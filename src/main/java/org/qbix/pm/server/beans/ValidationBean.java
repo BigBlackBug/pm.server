@@ -79,7 +79,7 @@ public class ValidationBean {
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
 		notNull(acc, "No userAccount with id = " + uji.getAccountid());
 
-		Game sess = em.find(Game.class, uji.getSessid());
+		Game sess = em.find(Game.class, uji.getGameId());
 		
 		assertTrue(sess.getStatus() == GameStatus.ACCEPTING_PLAYERS,
 				"game status is not 'ACCEPTING_PLAYERS'");
