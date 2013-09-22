@@ -16,6 +16,15 @@ public class PlayerEntryDTO extends AbstractDTO<PlayerEntry>{
 	private int team;
 	
 	private Long accountId;
+	
+	/** read only for client */
+	private String nick;
+	
+	/** read only for client */
+	private Long lolAccountId;
+	
+	/** read only for client */
+	private String summonersNick;
 
 	public PlayerEntryDTO() {
 	}
@@ -34,6 +43,30 @@ public class PlayerEntryDTO extends AbstractDTO<PlayerEntry>{
 	
 	public void setTeam(int team) {
 		this.team = team;
+	}
+	
+	public Long getLolAccountId() {
+		return lolAccountId;
+	}
+	
+	public void setLolAccountId(Long lolAccountId) {
+		this.lolAccountId = lolAccountId;
+	}
+	
+	public String getSummonersNick() {
+		return summonersNick;
+	}
+	
+	public void setSummonersNick(String summonersNick) {
+		this.summonersNick = summonersNick;
+	}
+	
+	public String getNick() {
+		return nick;
+	}
+	
+	public void setNick(String nick) {
+		this.nick = nick;
 	}
 	
 	@Override

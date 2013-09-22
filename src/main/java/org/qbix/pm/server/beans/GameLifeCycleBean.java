@@ -13,9 +13,9 @@ import javax.ejb.TransactionAttributeType;
 import org.qbix.pm.server.dto.ResultInfo;
 import org.qbix.pm.server.dto.UserJoinDTO;
 import org.qbix.pm.server.exceptions.PMLifecycleException;
-import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.Game;
 import org.qbix.pm.server.model.GameStatus;
+import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.Team;
 import org.qbix.pm.server.model.UserAccount;
 import org.qbix.pm.server.model.VictoryCriteria;
@@ -47,7 +47,7 @@ public class GameLifeCycleBean extends AbstractBean {
 		return game.getID();
 	}
 
-	public Long updateGame(Game game) {
+	public Game updateGame(Game game) {
 		Game managedGame = em.find(Game.class, game.getID());
 
 		if (game.getPlayers() != null) {
@@ -65,9 +65,11 @@ public class GameLifeCycleBean extends AbstractBean {
 			managedGame.setStake(stake);
 		}
 		
+		managedGame.setStatus(GameStatus.ACCEPTING_PLAYERS);
+		
 		log.info(String.format("game(id%d) updated.", game.getID()));
 
-		return game.getID();
+		return managedGame;
 	}
 
 	private void updatePlayers(Long gameId, Game oldGame,

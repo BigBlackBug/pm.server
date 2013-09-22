@@ -15,6 +15,7 @@ import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.annotaions.Traceable.LogLevel;
 import org.qbix.pm.server.dto.Notification;
 import org.qbix.pm.server.dto.NotificationType;
+import org.qbix.pm.server.dto.PlayerEntryDTO;
 import org.qbix.pm.server.dto.ResultInfo;
 import org.qbix.pm.server.dto.GameDTO;
 import org.qbix.pm.server.dto.UserJoinDTO;
@@ -52,12 +53,15 @@ public class GameFacadeBean extends AbstractBean implements GameFacade,
 		Game update = si.convertToEntity(em);
 		lockEntity(Game.class, si.getID());
 		update = validationBean.validateGameBeforeUpdating(update);
-		lifecycleBean.updateGame(update);
-		Gson gson = new Gson();
-		String json = gson.toJson(si);
+		Game updated = lifecycleBean.updateGame(update);
+		
+		GameDTO updatedGameDTO = createFullGameDTO(updated);
+		String json = new Gson().toJson(updatedGameDTO);
+		
 		notifier.notifyWithJMS(new Notification(
 				NotificationType.GAME_PARAMETERS_CHANGED,
 				getAccountIds(update), json));
+		
 		return update.getID();
 	}
 
@@ -138,6 +142,35 @@ public class GameFacadeBean extends AbstractBean implements GameFacade,
 			ids.add(pe.getAccount().getID());
 		}
 		return ids;
+	}
+
+	private GameDTO createFullGameDTO(Game game) {
+		GameDTO dto = new GameDTO();
+
+		dto.setID(game.getID());
+		dto.setStake(game.getStake());
+		dto.setStatus(game.getStatus().ordinal());
+		dto.setType("LOL");
+
+		List<PlayerEntryDTO> playerDTOs = new ArrayList<PlayerEntryDTO>();
+		for(PlayerEntry pe : game.getPlayers() ){
+			playerDTOs.add(createPlayerDTO(pe));
+		}
+		
+		dto.setPlayerEntries(playerDTOs);
+		return dto;
+	}
+
+	private PlayerEntryDTO createPlayerDTO(PlayerEntry pe) {
+		PlayerEntryDTO dto = new PlayerEntryDTO();
+		UserAccount acc = pe.getAccount();
+		dto.setAccountId(acc.getID());
+		dto.setNick(acc.getNickName());
+		dto.setLolAccountId(acc.getLoLAccount().getAccountID());
+		dto.setSummonersNick(acc.getLoLAccount().getSummonerInternalName());
+		dto.setTeam(pe.getTeam().ordinal());
+		
+		return dto;
 	}
 
 }
