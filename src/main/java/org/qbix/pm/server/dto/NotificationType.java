@@ -2,8 +2,6 @@ package org.qbix.pm.server.dto;
 
 public enum NotificationType {
 
-	UPDATE_WITH_GAMEDTO,
-
 	GAME_PARAMETERS_CHANGED,
 
 	GAME_STARTED,
