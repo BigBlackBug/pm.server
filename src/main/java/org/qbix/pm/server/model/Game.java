@@ -2,9 +2,7 @@ package org.qbix.pm.server.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -35,7 +33,8 @@ public class Game extends AbstractEntity {
 	private List<GameLifeCycleEntry> lifeCycleEntries = new ArrayList<GameLifeCycleEntry>();
 
 	@OneToMany(mappedBy = "game", cascade = CascadeType.ALL , orphanRemoval = true)
-	private Set<PlayerEntry> players = new HashSet<PlayerEntry>();
+	@OrderBy("creationDate")
+	private List<PlayerEntry> players = new ArrayList<PlayerEntry>();
 
 	@OneToOne
 	private UserAccount creator;
@@ -77,11 +76,11 @@ public class Game extends AbstractEntity {
 		return lifeCycleEntries;
 	}
 
-	public Set<PlayerEntry> getPlayers() {
+	public List<PlayerEntry> getPlayers() {
 		return players;
 	}
 
-	public void setPlayers(Set<PlayerEntry> players) {
+	public void setPlayers(List<PlayerEntry> players) {
 		this.players = players;
 	}
 
