@@ -7,6 +7,7 @@ public class PMException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
+	/** Error code */
 	protected int code = 0;
 
 	public PMException() {

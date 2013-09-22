@@ -14,7 +14,7 @@ import org.qbix.pm.server.model.VictoryCriteria;
  * : "bigblackbug", kills : {"$gt" : 15} } ] }, team2:{ winner : "hellbourne", }
  * } }
  **/
-public class VictoryCriteriaInfo extends AbstractInfo<VictoryCriteria> {
+public class VictoryCriteriaDTO extends AbstractDTO<VictoryCriteria> {
 
 	private static final long serialVersionUID = 2549283300751914989L;
 

@@ -10,7 +10,9 @@ import com.google.gson.reflect.TypeToken;
 public class Notification {
 
 	private final NotificationType notificationType;
+	
 	private final String jsonData;
+	
 	private final List<Long> accountIDs;
 
 	public Notification(NotificationType notificationType, List<Long> accountIds) {

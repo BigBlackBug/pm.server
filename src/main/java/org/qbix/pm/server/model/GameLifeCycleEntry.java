@@ -5,29 +5,29 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class SessionLifeCycleEntry extends AbstractEntity {
+public class GameLifeCycleEntry extends AbstractEntity {
 
 	private static final long serialVersionUID = -3615255025713052880L;
 
 	@ManyToOne
 	@NotNull
-	private Session session;
+	private Game game;
 	
-	private SessionStatus status;
+	private GameStatus status;
 	
-	public void setSession(Session session) {
-		this.session = session;
+	public void setGame(Game game) {
+		this.game = game;
 	}
 	
-	public Session getSession() {
-		return session;
+	public Game getGame() {
+		return game;
 	}
 	
-	public void setStatus(SessionStatus status) {
+	public void setStatus(GameStatus status) {
 		this.status = status;
 	}
 	
-	public SessionStatus getStatus() {
+	public GameStatus getStatus() {
 		return status;
 	}
 	

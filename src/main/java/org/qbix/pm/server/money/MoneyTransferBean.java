@@ -9,7 +9,7 @@ import javax.ejb.TransactionAttributeType;
 import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.beans.AbstractBean;
 import org.qbix.pm.server.exceptions.PMTransferMoneyException;
-import org.qbix.pm.server.model.Session;
+import org.qbix.pm.server.model.Game;
 import org.qbix.pm.server.model.UserAccount;
 import org.qbix.pm.server.money.MoneyTransferLogEntry.MoneyTransferAction;
 import org.slf4j.Logger;
@@ -27,39 +27,38 @@ public class MoneyTransferBean extends AbstractBean {
 			throws PMTransferMoneyException {
 
 		log.info(String.format("transfering session(id%d) result's money",
-				mti.getSessionId()));
+				mti.getGameId()));
 
 		// TODO need validation here ??
-		Session sess = em.find(Session.class, mti.getSessionId());
+		Game game = em.find(Game.class, mti.getGameId());
 
 		for (Long acc : mti.getTransferDetails().keySet()) {
 			UserAccount ua = lockEntity(UserAccount.class, acc);
 			addToUserAcc(ua, mti.getTransferDetails().get(acc),
-					MoneyTransferAction.SESSION_RESULT_RESOLVING, sess);
+					MoneyTransferAction.GAME_RESULT_RESOLVING, game);
 		}
 	}
 
-	/**
-	 * @param account
-	 *            should be managed!
-	 * @param sess
-	 *            should be managed!
-	 */
-	public void userSessionParticipation(Session sess, UserAccount userAcc,
-			BigDecimal stake) {
-		addToUserAcc(userAcc, stake, MoneyTransferAction.SESSION_PLAYER_PARTICIPATION,
-				sess);
+	public void userGameParticipation(Game game, UserAccount userAcc) {
+		userAcc = lockEntity(UserAccount.class, userAcc.getID());
+		BigDecimal stake = game.getStake();
+		userAcc.setInGameCash(stake);
+		stake = stake.negate();
+		addToUserAcc(userAcc, stake,
+				MoneyTransferAction.GAME_PLAYER_PARTICIPATION, game);
 	}
 
-	/**
-	 * @param account
-	 *            should be managed!
-	 * @param sess
-	 *            session(should be managed!), can be null if transfer operation
-	 *            is not in session context
-	 */
+	public void calcelUserGameParticipation(Game game, UserAccount userAcc) {
+		userAcc = lockEntity(UserAccount.class, userAcc.getID());
+		BigDecimal stake = game.getStake();
+		userAcc.setInGameCash(new BigDecimal(0));
+		addToUserAcc(userAcc, stake,
+				MoneyTransferAction.CANCEL_GAME_PLAYER_PARTICIPATION, game);
+	}
+
+	/** userAcc entity should be locked */
 	private void addToUserAcc(UserAccount account, BigDecimal money,
-			MoneyTransferAction action, Session sess) {
+			MoneyTransferAction action, Game game) {
 
 		account.setBalance(account.getBalance().add(money));
 
@@ -67,7 +66,8 @@ public class MoneyTransferBean extends AbstractBean {
 		mtle.setTargetAccount(account);
 		mtle.setCurrency(money);
 		mtle.setAction(action);
-		mtle.setSession(sess);
+		mtle.setGame(game);
 		em.persist(mtle);
 	}
+
 }

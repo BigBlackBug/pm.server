@@ -1,88 +1,78 @@
 package org.qbix.pm.server.beans;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.qbix.pm.server.dto.ParticipantsInfo;
 import org.qbix.pm.server.dto.ResultInfo;
-import org.qbix.pm.server.dto.SessionInfo;
-import org.qbix.pm.server.dto.UserJoinInfo;
+import org.qbix.pm.server.dto.GameDTO;
+import org.qbix.pm.server.dto.UserJoinDTO;
 import org.qbix.pm.server.exceptions.PMException;
 
+//TODO change REST requests samples !
 @Path("/")
 public interface ClientAPI {
 
 	// http://localhost:8080/pm.server/rs/regsess
-//	 {
-//	 "stake" : 200.0,
-//	 "vc" : { "parserId" : 0 },
-//	 "type" : "LOL",
-//	 "playerEntries" : [
-//	 {"accountId" : 1} , {"accountId" : 2, "stake" : 200 }
-//	 ]
-//	 }
+	// {
+	// "stake" : 200.0,
+	// "vc" : { "parserId" : 0 },
+	// "type" : "LOL",
+	// "playerEntries" : [
+	// {"accountId" : 1} , {"accountId" : 2, "stake" : 200 }
+	// ]
+	// }
 	@POST
-	@Path("/regsess")
+	@Path("/register_game")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Long registerSession(SessionInfo si) throws PMException;
+	public Long registerGame(GameDTO si) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/update_session
 	// {
-	// "sessid" : 100,	
+	// "sessid" : 100,
 	// "stake" : 200.0,
 	// "vc" : { "parserId" : 0 },
 	// }
 	@POST
-	@Path("/update_session")
+	@Path("/update_game")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Long updateSession(SessionInfo si) throws PMException;
-	
-	// http://localhost:8080/pm.server/rs/update_participants
-	// {
-	// "sessid" : 100,	
-	// "playerEntries" : [
-	// {"accountId" : 1, "team":0}
-	// }
-	@POST
-	@Path("/update_lol_participants")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
-	public Long updateLoLParticipants(ParticipantsInfo participants) throws PMException;
-	
+	public Long updateGame(GameDTO si) throws PMException;
+
 	// http://localhost:8080/pm.server/rs/leave_game
 	// {
 	// { "sessid" : 249, "accountid" : 1 }
 	@POST
 	@Path("/player_disconnected")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void playerDisconnected(UserJoinInfo uji) throws PMException;
-
+	public void playerDisconnected(UserJoinDTO uji) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/confpart
 	// { "sessid" : 249, "accountid" : 1 }
 	@POST
 	@Path("/confpart")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void confirmParticipation(UserJoinInfo uji) throws PMException;
+	public void confirmParticipation(UserJoinDTO uji) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/confpart
 	// { "sessid" : 249, "accountid" : 1 }
 	@POST
 	@Path("/cancelpart")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void cancelParticipation(UserJoinInfo uji) throws PMException;
+	public void cancelParticipation(UserJoinDTO uji) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/startsess
 	// { "sessid" : 249 }
 	@POST
 	@Path("/startsess")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void startSession(SessionInfo si) throws PMException;
+	public void startGame(GameDTO si) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/resolveresult
 	// { "sessid" : 258, "winner" : 0 }
@@ -90,5 +80,15 @@ public interface ClientAPI {
 	@Path("/resolveresult")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void resolveResult(ResultInfo si) throws PMException;
+
+	/**
+	 * Возвращает мапу LOL_ID -> PM_ID. Если в ключе мапы нет переданного
+	 * идентификатора, то значит у пользователя нет аккаунта ПМ
+	 */
+	@POST
+	@Path("/get_pmid_by_lolid")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Map<Long, Long> getPmIdByLolId(List<Long> ids) throws PMException;
 
 }

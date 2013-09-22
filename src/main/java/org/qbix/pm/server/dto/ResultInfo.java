@@ -7,23 +7,22 @@ public class ResultInfo implements Serializable {
 
 	private static final long serialVersionUID = -6725338544884993502L;
 
-	private Long sessid;
+	private Long gameID;
 	
 	/** 0/1 */ 
 	private int winner;
 	
-	//на будущее 
 	private Map<String, Object> params;
 	
 	public ResultInfo() {
 	}
 	
-	public void setSessid(Long sessid) {
-		this.sessid = sessid;
+	public void setGameID(Long sessid) {
+		this.gameID = sessid;
 	}
 	
-	public Long getSessid() {
-		return sessid;
+	public Long getGameID() {
+		return gameID;
 	}
 	
 	public void setWinner(int winner) {

@@ -9,24 +9,17 @@ public class SimpleMoneyTransferInfo implements Serializable {
 
 	private static final long serialVersionUID = 4900933241216514994L;
 
-	private Long sessionId;
+	private final Long gameId;
 
 	/** UserAccount.Id - amontToTransfer */
 	private Map<Long, BigDecimal> transferDetails = new HashMap<Long, BigDecimal>();
 
-	public SimpleMoneyTransferInfo() {
+	public SimpleMoneyTransferInfo(Long gameId) {
+		this.gameId = gameId;
 	}
 
-	public SimpleMoneyTransferInfo(Long aSessId) {
-		sessionId = aSessId;
-	}
-
-	public void setSessionId(Long sessionId) {
-		this.sessionId = sessionId;
-	}
-
-	public Long getSessionId() {
-		return sessionId;
+	public Long getGameId() {
+		return gameId;
 	}
 
 	public void setTransferDetails(Map<Long, BigDecimal> transferDetails) {

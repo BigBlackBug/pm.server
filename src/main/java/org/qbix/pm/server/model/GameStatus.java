@@ -1,6 +1,6 @@
 package org.qbix.pm.server.model;
 
-public enum SessionStatus {
+public enum GameStatus {
 
 	DOES_NOT_EXIST,
 
@@ -8,13 +8,12 @@ public enum SessionStatus {
 	
 	READY_TO_START,
 
-	SESSION_COMMITED,
+	COMMITED,
 	
-	GAME_IN_PROGRESS,
+	IN_PROGRESS,
 
-	RESULT_READY,
-	
-	RESOLVING_RESULT,
+	FINISHED,
 
 	CLOSED;
+	
 }

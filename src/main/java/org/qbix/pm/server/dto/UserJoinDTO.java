@@ -10,7 +10,7 @@ import java.io.Serializable;
 	"accountid" : 1,
 	} 
  * </code> */
-public class UserJoinInfo implements Serializable {
+public class UserJoinDTO implements Serializable {
 
 	private static final long serialVersionUID = 7025917910203033553L;
 
@@ -18,7 +18,7 @@ public class UserJoinInfo implements Serializable {
 
 	private Long accountid;
 
-	public UserJoinInfo() {
+	public UserJoinDTO() {
 	}
 
 	public void setSessid(Long sessid) {

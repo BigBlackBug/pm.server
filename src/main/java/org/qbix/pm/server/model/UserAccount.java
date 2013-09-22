@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -12,9 +13,12 @@ public class UserAccount extends AbstractEntity {
 	private static final long serialVersionUID = 2196558275988715559L;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+	@JoinColumn(name="lolacc_id")
 	private LoLAccount lolAccount;
 
-	private BigDecimal balance;
+	private BigDecimal balance = new BigDecimal(0);
+	
+	private BigDecimal inGameCash = new BigDecimal(0);
 
 	private String nickName;
 
@@ -43,6 +47,14 @@ public class UserAccount extends AbstractEntity {
 
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
+	}
+	
+	public BigDecimal getInGameCash() {
+		return inGameCash;
+	}
+	
+	public void setInGameCash(BigDecimal inGameCash) {
+		this.inGameCash = inGameCash;
 	}
 
 }

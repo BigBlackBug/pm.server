@@ -14,6 +14,9 @@ public abstract class AbstractBean {
 	@PersistenceContext(unitName = "pm")
 	protected EntityManager em;
 	
+	/**
+	 * Locks entity with PESSIMISTIC lock and return it
+	 */
 	protected <T> T lockEntity(Class<T> entityClass, Object id) {
 		if (id == null) {
 			throw new ValidationException("Entity id cant be null");

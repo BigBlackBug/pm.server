@@ -17,17 +17,17 @@ public abstract class AbstractEntity implements Serializable {
 
 	@GeneratedValue
 	@Id
-	private Long id;
+	private Long ID;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setID(Long id) {
+		this.ID = id;
 	}
 
-	public Long getId() {
-		return id;
+	public Long getID() {
+		return ID;
 	}
 
 	protected void setCreationDate(Date creationDate) {
@@ -54,13 +54,13 @@ public abstract class AbstractEntity implements Serializable {
 		}
 
 		AbstractEntity ae = (AbstractEntity) obj;
-		return ae.getId() == null ? false : ae.getId().equals(getId());
+		return ae.getID() == null ? false : ae.getID().equals(getID());
 	}
 
 	@Override
 	public int hashCode() {
-		if (id != null) {
-			return id.hashCode();
+		if (ID != null) {
+			return ID.hashCode();
 		}
 		return super.hashCode();
 	}

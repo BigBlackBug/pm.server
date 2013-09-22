@@ -13,10 +13,10 @@ public class PlayerEntry extends AbstractEntity {
 	private static final long serialVersionUID = -7655206966941068335L;
 
 	@ManyToOne
-	private Session session;
+	private Game game;
 	
 	@Enumerated
-	private SessionTeam team;
+	private Team team;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	private UserAccount account;
@@ -24,19 +24,19 @@ public class PlayerEntry extends AbstractEntity {
 	/** if not -1 -> user confirmed participation */
 	private BigDecimal stake = new BigDecimal(-1);
 
-	public Session getSession() {
-		return session;
+	public Game getGame() {
+		return game;
 	}
 
-	public void setSession(Session session) {
-		this.session = session;
+	public void setGame(Game g) {
+		this.game = g;
 	}
 
-	public SessionTeam getTeam() {
+	public Team getTeam() {
 		return team;
 	}
 
-	public void setTeam(SessionTeam team) {
+	public void setTeam(Team team) {
 		this.team = team;
 	}
 

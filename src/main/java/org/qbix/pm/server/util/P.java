@@ -1,4 +1,4 @@
-package org.qbix.pm.server.util.ss;
+package org.qbix.pm.server.util;
 
 public class P/* air */<F, S> {
 

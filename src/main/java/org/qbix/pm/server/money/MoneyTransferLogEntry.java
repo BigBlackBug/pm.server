@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.qbix.pm.server.model.AbstractEntity;
-import org.qbix.pm.server.model.Session;
+import org.qbix.pm.server.model.Game;
 import org.qbix.pm.server.model.UserAccount;
 
 @Entity
@@ -21,7 +21,7 @@ public class MoneyTransferLogEntry extends AbstractEntity {
 	private static final long serialVersionUID = 4149044336184589883L;
 
 	public static enum MoneyTransferAction {
-		SESSION_PLAYER_PARTICIPATION, SESSION_RESULT_RESOLVING, BALANCE_RECHARGE
+		GAME_PLAYER_PARTICIPATION, CANCEL_GAME_PLAYER_PARTICIPATION, GAME_RESULT_RESOLVING, BALANCE_RECHARGE
 	}
 
 	@ManyToOne
@@ -38,8 +38,8 @@ public class MoneyTransferLogEntry extends AbstractEntity {
 
 	/** can be null */
 	@ManyToOne
-	@JoinColumn(name = "session_id")
-	private Session session;
+	@JoinColumn(name = "game_id")
+	private Game game;
 
 	public MoneyTransferLogEntry() {
 	}
@@ -68,11 +68,11 @@ public class MoneyTransferLogEntry extends AbstractEntity {
 		return currency;
 	}
 
-	public void setSession(Session session) {
-		this.session = session;
+	public void setGame(Game g) {
+		this.game = g;
 	}
 
-	public Session getSession() {
-		return session;
+	public Game getGame() {
+		return game;
 	}
 }

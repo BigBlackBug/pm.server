@@ -1,13 +1,13 @@
 package org.qbix.pm.server.model;
 
-public enum SessionTeam {
+public enum Team {
 	TEAM_0(0),
 
 	TEAM_1(1);
 
 	private int code;
 
-	private SessionTeam(int code) {
+	private Team(int code) {
 		this.code = code;
 	}
 
@@ -15,7 +15,7 @@ public enum SessionTeam {
 		return code;
 	}
 
-	public static SessionTeam valueOf(int code) throws IllegalArgumentException {
+	public static Team valueOf(int code) throws IllegalArgumentException {
 		switch (code) {
 		case 0:
 			return TEAM_0;

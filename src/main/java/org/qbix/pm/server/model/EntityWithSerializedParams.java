@@ -25,7 +25,7 @@ public abstract class EntityWithSerializedParams extends AbstractEntity {
 
 	private transient Map<String, Object> paramsMap;
 
-	private transient boolean convertMapParams = false;
+	private transient volatile boolean needToConvertMapParams = false;
 
 	public void setJsonParams(String parameters) {
 		this.jsonParams = parameters;
@@ -40,39 +40,41 @@ public abstract class EntityWithSerializedParams extends AbstractEntity {
 		if (paramsMap != null) {
 			return paramsMap;
 		}
-		
-		// если мы получали карту, то возможно мы в нее что то записывали, и
-		// поэтому при следующем персисте/апдейте мы должны конвертить ее в
-		// json, чтобы записать в бд
 
-		// TODO переписать, тк вызывается слишком много конвертов, даже когда они
-		// нах не нужны
-		convertMapParams = true;
+		/*
+		 * Если мы получали карту, то возможно мы в нее что то записывали, и
+		 * поэтому при следующем персисте/апдейте мы должны конвертить ее в
+		 * json, чтобы записать в бд новые данные.
+		 * 
+		 * TODO подумать как решить проблему лишних конвертов, когда мы просто
+		 * получаем карту, но ничего в ней не меняем
+		 */
+		needToConvertMapParams = true;
 
 		if ((getJsonParams() == null) || getJsonParams().isEmpty()) {
-			paramsMap = new HashMap<String, Object>(); 
+			paramsMap = new HashMap<String, Object>();
 			return paramsMap;
 		}
 
 		paramsMap = new Gson().fromJson(jsonParams, Map.class);
-		
+
 		return paramsMap;
 	}
-	
-	void convertMapAndSetJSParams(){
+
+	void convertMapAndSetJSParams() {
 		jsonParams = new Gson().toJson(getParamsMap());
 	}
-	
+
 	@PrePersist
 	protected void convertParamsPP() {
-		if (convertMapParams) {
+		if (needToConvertMapParams) {
 			convertMapAndSetJSParams();
 		}
 	}
 
 	@PreUpdate
 	protected void convertParamsPU() {
-		if (convertMapParams) {
+		if (needToConvertMapParams) {
 			convertMapAndSetJSParams();
 		}
 	}

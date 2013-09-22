@@ -16,33 +16,33 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 
 @Entity
-public class Session extends AbstractEntity {
+public class Game extends AbstractEntity {
 
 	private static final long serialVersionUID = 414967553274661010L;
 
 	@Enumerated(EnumType.STRING)
-	private SessionStatus status = SessionStatus.DOES_NOT_EXIST;
+	private GameStatus status = GameStatus.DOES_NOT_EXIST;
 
 	@Enumerated(EnumType.STRING)
-	private SessionType type;
+	private GameType type;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
 	private VictoryCriteria victoryCriteria;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
-	@JoinColumn(name = "session_id")
+	@JoinColumn(name = "game_id")
 	@OrderBy("creationDate")
-	private List<SessionLifeCycleEntry> lifeCycleEntries = new ArrayList<SessionLifeCycleEntry>();
+	private List<GameLifeCycleEntry> lifeCycleEntries = new ArrayList<GameLifeCycleEntry>();
 
-	@OneToMany(mappedBy = "session", cascade = CascadeType.ALL )
+	@OneToMany(mappedBy = "game", cascade = CascadeType.ALL , orphanRemoval = true)
 	private Set<PlayerEntry> players = new HashSet<PlayerEntry>();
 
 	@OneToOne
-	private UserAccount initiator;
+	private UserAccount creator;
 	
 	private BigDecimal stake;
 
-	public Session() {
+	public Game() {
 	}
 
 	public void setVictoryCriteria(VictoryCriteria victoryCriteria) {
@@ -53,27 +53,27 @@ public class Session extends AbstractEntity {
 		return victoryCriteria;
 	}
 
-	public void setStatus(SessionStatus status) {
+	public void setStatus(GameStatus status) {
 		this.status = status;
 	}
 
-	public SessionStatus getStatus() {
+	public GameStatus getStatus() {
 		return status;
 	}
 
-	public void setType(SessionType type) {
+	public void setType(GameType type) {
 		this.type = type;
 	}
 
-	public SessionType getType() {
+	public GameType getType() {
 		return type;
 	}
 
-	public void setLifeCycleEntries(List<SessionLifeCycleEntry> lifeCycleEntries) {
+	public void setLifeCycleEntries(List<GameLifeCycleEntry> lifeCycleEntries) {
 		this.lifeCycleEntries = lifeCycleEntries;
 	}
 
-	public List<SessionLifeCycleEntry> getLifeCycleEntries() {
+	public List<GameLifeCycleEntry> getLifeCycleEntries() {
 		return lifeCycleEntries;
 	}
 
@@ -93,12 +93,12 @@ public class Session extends AbstractEntity {
 		this.stake = stake;
 	}
 	
-	public UserAccount getInitiator() {
-		return initiator;
+	public UserAccount getCreator() {
+		return creator;
 	}
 	
-	public void setInitiator(UserAccount initiator) {
-		this.initiator = initiator;
+	public void setCreator(UserAccount creator) {
+		this.creator = creator;
 	}
 
 }

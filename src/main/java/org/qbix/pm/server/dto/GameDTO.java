@@ -6,16 +6,16 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.qbix.pm.server.model.PlayerEntry;
-import org.qbix.pm.server.model.Session;
-import org.qbix.pm.server.model.SessionType;
+import org.qbix.pm.server.model.Game;
+import org.qbix.pm.server.model.GameType;
 
 //json obj
 /**
  * <code>
  * {
-	"sessid" : 1, 
+	"ID" : 1, 
 	
-	"type" : "hon",
+	"type" : "LOL",
 	
 	"stake" : 100.0, 
 
@@ -26,46 +26,46 @@ import org.qbix.pm.server.model.SessionType;
 	} </code>
  * 
  */
-public class SessionInfo extends AbstractInfo<Session> {
+public class GameDTO extends AbstractDTO<Game> {
 
 	private static final long serialVersionUID = 3478578098981496431L;
 
-	private Long sessid;
+	private Long ID;
 
 	/** "LOL" , "HON" */
 	private String type;
 
-	private VictoryCriteriaInfo vc;
+	private VictoryCriteriaDTO vc;
 
 	private BigDecimal stake;
 
-	private List<PlayerEntryInfo> playerEntries;
+	private List<PlayerEntryDTO> playerEntries;
 
 	private Integer status;
-	
-	public SessionInfo() {
+
+	public GameDTO() {
 	}
 
-	public SessionInfo(Long id) {
-		sessid = id;
+	public GameDTO(Long id) {
+		ID = id;
 	}
 
-	public void setSessid(Long sessionId) {
-		this.sessid = sessionId;
+	public void setID(Long sessionId) {
+		this.ID = sessionId;
 	}
 
-	public Long getSessid() {
-		return sessid;
+	public Long getID() {
+		return ID;
 	}
 
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	
+
 	public Integer getStatus() {
 		return status;
 	}
-	
+
 	public void setType(String type) {
 		this.type = type;
 	}
@@ -74,11 +74,11 @@ public class SessionInfo extends AbstractInfo<Session> {
 		return type;
 	}
 
-	public void setVc(VictoryCriteriaInfo vc) {
+	public void setVc(VictoryCriteriaDTO vc) {
 		this.vc = vc;
 	}
 
-	public VictoryCriteriaInfo getVc() {
+	public VictoryCriteriaDTO getVc() {
 		return vc;
 	}
 
@@ -90,40 +90,36 @@ public class SessionInfo extends AbstractInfo<Session> {
 		return stake;
 	}
 
-	public void setPlayerEntries(List<PlayerEntryInfo> playerInfos) {
+	public void setPlayerEntries(List<PlayerEntryDTO> playerInfos) {
 		this.playerEntries = playerInfos;
 	}
 
-	public List<PlayerEntryInfo> getPlayerEntries() {
+	public List<PlayerEntryDTO> getPlayerEntries() {
 		return playerEntries;
 	}
 
 	@Override
-	public Session convertToEntity(EntityManager em) {
-		Session sess = new Session();
-		if(sessid != null){
-			sess.setId(sessid);
-		}
-		if (type != null) {
-			sess.setType(SessionType.getSessionType(type));
+	public Game convertToEntity(EntityManager em) {
+		Game game = new Game();
+		if (ID != null) {
+			game.setID(ID);
 		}
 
-		if (stake != null) {
-			sess.setStake(stake);
-		}
+		game.setType(GameType.LOL);
+		game.setStake(stake);
 
 		if (playerEntries != null) {
-			for (PlayerEntryInfo pei : playerEntries) {
+			for (PlayerEntryDTO pei : playerEntries) {
 				PlayerEntry pe = pei.convertToEntity(em);
-				pe.setSession(sess);
-				sess.getPlayers().add(pe);
+				pe.setGame(game);
+				game.getPlayers().add(pe);
 			}
 		}
 
 		if (vc != null) {
-			sess.setVictoryCriteria(vc.convertToEntity(em));
+			game.setVictoryCriteria(vc.convertToEntity(em));
 		}
-		return sess;
+		return game;
 	}
 
 }
