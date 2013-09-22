@@ -1,7 +1,5 @@
 package org.qbix.pm.server.beans;
 
-import java.math.BigDecimal;
-
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -14,6 +12,7 @@ import org.qbix.pm.server.exceptions.PMValidationException;
 import org.qbix.pm.server.model.Game;
 import org.qbix.pm.server.model.GameStatus;
 import org.qbix.pm.server.model.UserAccount;
+import org.qbix.pm.server.util.Utils;
 
 /**
  * Validates entities/info. <br>
@@ -44,9 +43,8 @@ public class ValidationBean {
 			throw new PMValidationException(mess);
 		}
 	}
-	
-	public static void fail(String message)
-			throws PMValidationException {
+
+	public static void fail(String message) throws PMValidationException {
 		throw new PMValidationException(message);
 	}
 
@@ -59,17 +57,15 @@ public class ValidationBean {
 		notNull(game.getType(), "game.type = null");
 		notNull(game.getStake(), "game.stake = null");
 
-		assertTrue(game.getStake().compareTo(new BigDecimal(0)) != -1,
-				"game.stake <= 0");
+		assertTrue(Utils.lt0(game.getStake()), "game.stake <= 0");
 
 		game.setID(null);
-		
-		//TODO teams check
 		return game;
 	}
 
 	public Game validateGameBeforeUpdating(Game game)
 			throws PMValidationException {
+		// TODO game status check
 		return game;
 	}
 
@@ -79,12 +75,12 @@ public class ValidationBean {
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
 		notNull(acc, "No userAccount with id = " + uji.getAccountid());
 
-		Game sess = em.find(Game.class, uji.getGameId());
-		
-		assertTrue(sess.getStatus() == GameStatus.ACCEPTING_PLAYERS,
+		Game game = em.find(Game.class, uji.getGameId());
+
+		assertTrue(game.getStatus() == GameStatus.ACCEPTING_PLAYERS,
 				"game status is not 'ACCEPTING_PLAYERS'");
 
-		assertTrue(acc.getBalance().compareTo(sess.getStake()) != -1,
+		assertTrue(acc.getBalance().compareTo(game.getStake()) != -1,
 				"user.currency < session.stake");
 
 		return uji;
@@ -96,24 +92,39 @@ public class ValidationBean {
 		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
 		notNull(acc, "No userAccount with id = " + uji.getAccountid());
 
-		//TODO ...
-		
+		// TODO game status check
+
 		return uji;
 	}
 
-	public Game validateGameBeforeStart(Game sess)
-			throws PMValidationException {
-		// assertTrue(sess.getStatus() == SessionStatus.READY_FOR_POLLING,
-		// String.format("session(id%d).status != 'READY_FOR_POLLING'",
-		// sessId));
-
-		return sess;
+	public Game validateGameBeforeStart(Game game) throws PMValidationException {
+		assertTrue(game.getStatus() == GameStatus.READY_TO_START,
+				"game.status is not READY_TO_START");
+		return game;
 	}
 
 	public ResultInfo validateResult(ResultInfo ri)
 			throws PMValidationException {
 		notNull(ri);
 		return ri;
+	}
+
+	public Game validateGameBeforeCancelling(Game game)
+			throws PMValidationException {
+		GameStatus status = game.getStatus();
+
+		switch (status) {
+		case DOES_NOT_EXIST:
+			break;
+		case ACCEPTING_PLAYERS:
+			break;
+		case READY_TO_START:
+			break;
+		default:
+			fail("can't cancel game in status " + status);
+		}
+
+		return game;
 	}
 
 }

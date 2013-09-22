@@ -108,7 +108,7 @@ public class GameDTO extends AbstractDTO<Game> {
 		game.setType(GameType.LOL);
 		game.setStake(stake);
 
-		if (playerEntries != null) {
+		if (playerEntries != null && !playerEntries.isEmpty()) {
 			for (PlayerEntryDTO pei : playerEntries) {
 				PlayerEntry pe = pei.convertToEntity(em);
 				pe.setGame(game);

@@ -66,6 +66,11 @@ public interface ClientAPI {
 	@Path("/cancelpart")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void cancelParticipation(UserJoinDTO uji) throws PMException;
+	
+	@POST
+	@Path("/cancel_game")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void cancelGame(GameDTO game) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/startsess
 	// { "sessid" : 249 }

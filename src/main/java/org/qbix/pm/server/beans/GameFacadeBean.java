@@ -86,6 +86,17 @@ public class GameFacadeBean extends AbstractBean implements GameFacade,
 	}
 
 	@Override
+	public void cancelGame(GameDTO gameDTO) throws PMException {
+		Game game = lockEntity(Game.class, gameDTO.getID());
+		game = validationBean.validateGameBeforeCancelling(game);
+		lifecycleBean.cancelGame(game);
+		
+		String json = new Gson().toJson(game.getID()); 
+		notifier.notifyWithJMS(new Notification(NotificationType.GAME_CANCELLED,
+				getAccountIds(game), json));
+	}
+	
+	@Override
 	public void cancelParticipation(UserJoinDTO uji) throws PMException {
 		Game game = lockEntity(Game.class, uji.getGameId());
 		uji = validationBean.validateUserJoinInfoBeforeDisconnecting(uji);
@@ -99,7 +110,7 @@ public class GameFacadeBean extends AbstractBean implements GameFacade,
 	@Override
 	public void startGame(GameDTO si) throws PMException {
 		Game game = si.convertToEntity(em);
-		lockEntity(Game.class, si.getID());
+		game = lockEntity(Game.class, si.getID());
 		game = validationBean.validateGameBeforeStart(game);
 		lifecycleBean.startGame(game);
 		notifier.notifyWithJMS(new Notification(NotificationType.GAME_STARTED,

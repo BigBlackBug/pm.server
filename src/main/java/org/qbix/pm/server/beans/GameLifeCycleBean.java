@@ -21,6 +21,7 @@ import org.qbix.pm.server.model.UserAccount;
 import org.qbix.pm.server.model.VictoryCriteria;
 import org.qbix.pm.server.money.MoneyTransferBean;
 import org.qbix.pm.server.money.SimpleMoneyTransferInfo;
+import org.qbix.pm.server.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +51,10 @@ public class GameLifeCycleBean extends AbstractBean {
 	public Game updateGame(Game game) {
 		Game managedGame = em.find(Game.class, game.getID());
 
-		if (game.getPlayers() != null) {
-			updatePlayers(game.getID(), managedGame,
-					game);
+		if (game.getPlayers() != null && !game.getPlayers().isEmpty()) {
+			updatePlayers(game.getID(), managedGame, game);
 		}
-		
+
 		VictoryCriteria vc = game.getVictoryCriteria();
 		if (vc != null) {
 			managedGame.setVictoryCriteria(vc);
@@ -64,16 +64,15 @@ public class GameLifeCycleBean extends AbstractBean {
 		if (stake != null) {
 			managedGame.setStake(stake);
 		}
-		
+
 		managedGame.setStatus(GameStatus.ACCEPTING_PLAYERS);
-		
+
 		log.info(String.format("game(id%d) updated.", game.getID()));
 
 		return managedGame;
 	}
 
-	private void updatePlayers(Long gameId, Game oldGame,
-			Game newGame) {
+	private void updatePlayers(Long gameId, Game oldGame, Game newGame) {
 		moneyTransfer.refreshPlayersList(oldGame);
 		oldGame.getPlayers().clear();
 		oldGame.getPlayers().addAll(newGame.getPlayers());
@@ -101,6 +100,10 @@ public class GameLifeCycleBean extends AbstractBean {
 
 		for (PlayerEntry pe : game.getPlayers()) {
 			if (pe.getAccount().equals(acc)) {
+				if (Utils.gte0(pe.getStake())) {
+					// already confirmed
+					return;
+				}
 				pe.setStake(game.getStake());
 				break;
 			}
@@ -128,6 +131,8 @@ public class GameLifeCycleBean extends AbstractBean {
 		}
 
 		moneyTransfer.calcelUserGameParticipation(game, acc);
+
+		game.setStatus(GameStatus.ACCEPTING_PLAYERS);
 
 		log.info(String.format(
 				"user(id%d) cancelled participation is game(id%d)",
@@ -157,12 +162,11 @@ public class GameLifeCycleBean extends AbstractBean {
 		moneyTransfer.transfer(mti);
 
 		em.find(Game.class, ri.getGameID()).setStatus(GameStatus.CLOSED);
-		log.info("game(id%d) result resolved, game closed");
+		log.info(String.format("game(id%d) result resolved, game closed",
+				ri.getGameID()));
 	}
 
 	private SimpleMoneyTransferInfo getMoneyTransferInfo(ResultInfo ri) {
-		log.info(String.format("analyzing session(id%s) result", ri.getGameID()));
-
 		Game game = em.find(Game.class, ri.getGameID());
 		Team winnerTeam = Team.valueOf(ri.getWinner());
 		List<Long> winners = new ArrayList<Long>();
@@ -187,6 +191,14 @@ public class GameLifeCycleBean extends AbstractBean {
 		}
 
 		return mti;
+	}
+
+	public void cancelGame(Game game) {
+		moneyTransfer.refreshPlayersList(game);
+		
+		game.setStatus(GameStatus.CANCELLED);
+		
+		log.info(String.format("game(id%d) cancelled", game.getID()));
 	}
 
 }

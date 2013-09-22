@@ -1,6 +1,7 @@
 package org.qbix.pm.server.money;
 
 import java.math.BigDecimal;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -12,6 +13,7 @@ import org.qbix.pm.server.model.Game;
 import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.UserAccount;
 import org.qbix.pm.server.money.MoneyTransferLogEntry.MoneyTransferAction;
+import org.qbix.pm.server.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,8 +64,8 @@ public class MoneyTransferBean extends AbstractBean {
 			UserAccount acc = lockEntity(UserAccount.class, pe.getAccount()
 					.getID());
 			
-			/* если чел уже успел согласится */
-			if(!pe.getStake().equals(new BigDecimal(-1))){
+			/* если чел уже успел согласиться */
+			if(Utils.gte0(pe.getStake())){
 				pe.setStake(new BigDecimal(-1));
 				
 				acc.setInGameCash(new BigDecimal(0));
