@@ -18,20 +18,20 @@ import org.qbix.pm.server.exceptions.PMException;
 @Path("/")
 public interface ClientAPI {
 
-	// http://localhost:8080/pm.server/rs/regsess
-	// {
-	// "stake" : 200.0,
-	// "vc" : { "parserId" : 0 },
-	// "type" : "LOL",
-	// "playerEntries" : [
-	// {"accountId" : 1} , {"accountId" : 2, "stake" : 200 }
-	// ]
-	// }
+//	 http://localhost:8080/pm.server/rs/regsess
+//	 {
+//	 "stake" : 200.0,
+//	 "vc" : { "parserId" : 0 },
+//	 "type" : "LOL",
+//	 "playerEntries" : [
+//	 {"accountId" : 1} , {"accountId" : 2, "stake" : 200 }
+//	 ]
+//	 }
 	@POST
 	@Path("/register_game")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Long registerGame(GameDTO si) throws PMException;
+	public Long registerGame(GameDTO gameDTO) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/update_session
 	// {
@@ -43,7 +43,7 @@ public interface ClientAPI {
 	@Path("/update_game")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Long updateGame(GameDTO si) throws PMException;
+	public Long updateGame(GameDTO gameDTO) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/leave_game
 	// {
@@ -51,40 +51,40 @@ public interface ClientAPI {
 	@POST
 	@Path("/player_disconnected")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void playerDisconnected(UserJoinDTO uji) throws PMException;
+	public void playerDisconnected(UserJoinDTO userDTO) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/confpart
 	// { "sessid" : 249, "accountid" : 1 }
 	@POST
 	@Path("/confpart")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void confirmParticipation(UserJoinDTO uji) throws PMException;
+	public void confirmParticipation(UserJoinDTO userDTO) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/confpart
 	// { "sessid" : 249, "accountid" : 1 }
 	@POST
 	@Path("/cancelpart")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void cancelParticipation(UserJoinDTO uji) throws PMException;
+	public void cancelParticipation(UserJoinDTO userDTO) throws PMException;
 	
 	@POST
 	@Path("/cancel_game")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void cancelGame(GameDTO game) throws PMException;
+	public void cancelGame(GameDTO gameDTO) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/startsess
 	// { "sessid" : 249 }
 	@POST
 	@Path("/start_game")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void startGame(GameDTO si) throws PMException;
+	public void startGame(GameDTO gameDTO) throws PMException;
 
 	// http://localhost:8080/pm.server/rs/resolveresult
 	// { "sessid" : 258, "winner" : 0 }
 	@POST
 	@Path("/resolve_result")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void resolveResult(ResultInfo si) throws PMException;
+	public void resolveResult(ResultInfo resultInfo) throws PMException;
 
 	/**
 	 * Возвращает мапу LOL_ID -> PM_ID. Если в ключе мапы нет переданного

@@ -13,15 +13,15 @@ import javax.ejb.TransactionAttributeType;
 
 import org.qbix.pm.server.annotaions.Traceable;
 import org.qbix.pm.server.annotaions.Traceable.LogLevel;
+import org.qbix.pm.server.dto.GameDTO;
 import org.qbix.pm.server.dto.Notification;
 import org.qbix.pm.server.dto.NotificationType;
 import org.qbix.pm.server.dto.PlayerEntryDTO;
 import org.qbix.pm.server.dto.ResultInfo;
-import org.qbix.pm.server.dto.GameDTO;
 import org.qbix.pm.server.dto.UserJoinDTO;
 import org.qbix.pm.server.exceptions.PMException;
-import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.Game;
+import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.UserAccount;
 
 import com.google.gson.Gson;
@@ -40,49 +40,58 @@ public class GameFacadeBean extends AbstractBean implements GameFacade,
 
 	@EJB
 	private NotificationBean notifier;
+	
+	private final Gson gson;
+	
+	public GameFacadeBean() {
+		gson = new Gson();
+	}
 
 	@Override
-	public Long registerGame(GameDTO si) throws PMException {
-		Game newGame = si.convertToEntity(em);
+	public Long registerGame(GameDTO gameDTO) throws PMException {
+		Game newGame = gameDTO.convertToEntity(em);
 		newGame = validationBean.validateGameBeforeRegister(newGame);
 		return lifecycleBean.registerGame(newGame);
 	}
 
 	@Override
-	public Long updateGame(GameDTO si) throws PMException {
-		Game update = si.convertToEntity(em);
-		lockEntity(Game.class, si.getID());
+	public Long updateGame(GameDTO gameDTO) throws PMException {
+		Game update = gameDTO.convertToEntity(em);
+		lockEntity(Game.class, gameDTO.getID());
 		update = validationBean.validateGameBeforeUpdating(update);
 		Game updated = lifecycleBean.updateGame(update);
 		
 		GameDTO updatedGameDTO = createFullGameDTO(updated);
-		String json = new Gson().toJson(updatedGameDTO);
+		String json = gson.toJson(updatedGameDTO);
 		
 		notifier.notifyWithJMS(new Notification(
 				NotificationType.GAME_PARAMETERS_CHANGED,
-				getAccountIds(update), json));
+				getAccountIds(update), 
+				json));
 		
 		return update.getID();
 	}
 
 	@Override
-	public void playerDisconnected(UserJoinDTO uji) throws PMException {
-		Game game = lockEntity(Game.class, uji.getGameId());
-		uji = validationBean.validateUserJoinInfoBeforeDisconnecting(uji);
-		lifecycleBean.playerDisconnected(uji);
+	public void playerDisconnected(UserJoinDTO userDTO) throws PMException {
+		Game game = lockEntity(Game.class, userDTO.getGameId());
+		userDTO = validationBean.validateUserJoinInfoBeforeDisconnecting(userDTO);
+		lifecycleBean.playerDisconnected(userDTO);
 		notifier.notifyWithJMS(new Notification(
-				NotificationType.PLAYER_DISCONNECTED, getAccountIds(game),
-				"account_id", uji.getAccountid()));
+				NotificationType.PLAYER_DISCONNECTED, 
+				getAccountIds(game),
+				gson.toJson(userDTO)));
 	}
 
 	@Override
-	public void confirmParticipation(UserJoinDTO uji) throws PMException {
-		Game game = lockEntity(Game.class, uji.getGameId());
-		uji = validationBean.validateUserJoinInfoBeforeAdding(uji);
-		lifecycleBean.confirmParticipation(uji);
+	public void confirmParticipation(UserJoinDTO userDTO) throws PMException {
+		Game game = lockEntity(Game.class, userDTO.getGameId());
+		userDTO = validationBean.validateUserJoinInfoBeforeAdding(userDTO);
+		lifecycleBean.confirmParticipation(userDTO);
 		notifier.notifyWithJMS(new Notification(
-				NotificationType.PLAYER_CONFIRMED_STAKE, getAccountIds(game),
-				"account_id", uji.getAccountid()));
+				NotificationType.PLAYER_CONFIRMED_STAKE, 
+				getAccountIds(game),
+				gson.toJson(userDTO)));
 	}
 
 	@Override
@@ -91,37 +100,40 @@ public class GameFacadeBean extends AbstractBean implements GameFacade,
 		game = validationBean.validateGameBeforeCancelling(game);
 		lifecycleBean.cancelGame(game);
 		
-		String json = new Gson().toJson(game.getID()); 
-		notifier.notifyWithJMS(new Notification(NotificationType.GAME_CANCELLED,
-				getAccountIds(game), json));
+		notifier.notifyWithJMS(new Notification(
+				NotificationType.GAME_CANCELLED, 
+				getAccountIds(game),
+				"game_id", game.getID()));
 	}
 	
 	@Override
-	public void cancelParticipation(UserJoinDTO uji) throws PMException {
-		Game game = lockEntity(Game.class, uji.getGameId());
-		uji = validationBean.validateUserJoinInfoBeforeDisconnecting(uji);
-		lifecycleBean.cancelParticipation(uji);
+	public void cancelParticipation(UserJoinDTO userDTO) throws PMException {
+		Game game = lockEntity(Game.class, userDTO.getGameId());
+		userDTO = validationBean.validateUserJoinInfoBeforeDisconnecting(userDTO);
+		lifecycleBean.cancelParticipation(userDTO);
 
 		notifier.notifyWithJMS(new Notification(
-				NotificationType.PLAYER_CANCELLED_STAKE, getAccountIds(game),
-				"account_id", uji.getAccountid()));
+				NotificationType.PLAYER_CANCELLED_STAKE, 
+				getAccountIds(game),
+				gson.toJson(userDTO)));
 	}
 
 	@Override
-	public void startGame(GameDTO si) throws PMException {
-		Game game = si.convertToEntity(em);
-		game = lockEntity(Game.class, si.getID());
+	public void startGame(GameDTO gameDTO) throws PMException {
+		Game game = gameDTO.convertToEntity(em);
+		game = lockEntity(Game.class, gameDTO.getID());
 		game = validationBean.validateGameBeforeStart(game);
 		lifecycleBean.startGame(game);
-		notifier.notifyWithJMS(new Notification(NotificationType.GAME_STARTED,
+		notifier.notifyWithJMS(new Notification(
+				NotificationType.GAME_STARTED,
 				getAccountIds(game)));
 	}
 
 	@Override
-	public void resolveResult(ResultInfo ri) throws PMException {
-		lockEntity(Game.class, ri.getGameID());
-		ri = validationBean.validateResult(ri);
-		lifecycleBean.resolveResultAndCloseSession(ri);
+	public void resolveResult(ResultInfo resultInfo) throws PMException {
+		lockEntity(Game.class, resultInfo.getGameID());
+		resultInfo = validationBean.validateResult(resultInfo);
+		lifecycleBean.resolveResultAndCloseSession(resultInfo);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)

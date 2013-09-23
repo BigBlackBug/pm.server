@@ -30,17 +30,17 @@ public class ValidationBean {
 		}
 	}
 
-	public static void notNull(Object obj, String mess)
+	public static void notNull(Object obj, String message)
 			throws PMValidationException {
 		if (obj == null) {
-			throw new PMValidationException(mess);
+			throw new PMValidationException(message);
 		}
 	}
 
-	public static void assertTrue(Boolean bool, String mess)
+	public static void assertTrue(Boolean bool, String message)
 			throws PMValidationException {
 		if (!bool) {
-			throw new PMValidationException(mess);
+			throw new PMValidationException(message);
 		}
 	}
 
@@ -69,13 +69,13 @@ public class ValidationBean {
 		return game;
 	}
 
-	public UserJoinDTO validateUserJoinInfoBeforeAdding(UserJoinDTO uji)
+	public UserJoinDTO validateUserJoinInfoBeforeAdding(UserJoinDTO userDTO)
 			throws PMValidationException {
-		notNull(uji.getAccountid());
-		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
-		notNull(acc, "No userAccount with id = " + uji.getAccountid());
+		notNull(userDTO.getAccountId());
+		UserAccount acc = em.find(UserAccount.class, userDTO.getAccountId());
+		notNull(acc, "No userAccount with id = " + userDTO.getAccountId());
 
-		Game game = em.find(Game.class, uji.getGameId());
+		Game game = em.find(Game.class, userDTO.getGameId());
 
 		assertTrue(game.getStatus() == GameStatus.ACCEPTING_PLAYERS,
 				"game status is not 'ACCEPTING_PLAYERS'");
@@ -83,18 +83,18 @@ public class ValidationBean {
 		assertTrue(acc.getBalance().compareTo(game.getStake()) != -1,
 				"user.currency < session.stake");
 
-		return uji;
+		return userDTO;
 	}
 
-	public UserJoinDTO validateUserJoinInfoBeforeDisconnecting(UserJoinDTO uji)
+	public UserJoinDTO validateUserJoinInfoBeforeDisconnecting(UserJoinDTO userDTO)
 			throws PMValidationException {
-		notNull(uji.getAccountid());
-		UserAccount acc = em.find(UserAccount.class, uji.getAccountid());
-		notNull(acc, "No userAccount with id = " + uji.getAccountid());
+		notNull(userDTO.getAccountId());
+		UserAccount acc = em.find(UserAccount.class, userDTO.getAccountId());
+		notNull(acc, "No userAccount with id = " + userDTO.getAccountId());
 
 		// TODO game status check
 
-		return uji;
+		return userDTO;
 	}
 
 	public Game validateGameBeforeStart(Game game) throws PMValidationException {

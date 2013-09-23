@@ -36,7 +36,7 @@ public class NotificationBean {
 	private Queue queue;
 
 	/**
-	 *  Sends JMS message with Notification.json content 
+	 *  Sends a JMS message with the provided notification as its content
 	 */
 	public void notifyWithJMS(Notification notification) {
 		Connection jmsConnection = null;
@@ -63,7 +63,7 @@ public class NotificationBean {
 				try {
 					jmsConnection.close();
 				} catch (Exception e) {
-					log.info("the connection wasn't closed. we're all gonna die");
+					log.info("Unable to close jms connection", e);
 				}
 			}
 		}
