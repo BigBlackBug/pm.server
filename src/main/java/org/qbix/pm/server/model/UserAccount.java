@@ -22,6 +22,13 @@ public class UserAccount extends AbstractEntity {
 
 	private String nickName;
 
+	private String email;
+
+    /**
+     * Пароль храниться ввиде hash md5
+     */
+	private String password;
+
 	public UserAccount() {
 	}
 
@@ -57,4 +64,19 @@ public class UserAccount extends AbstractEntity {
 		this.inGameCash = inGameCash;
 	}
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
