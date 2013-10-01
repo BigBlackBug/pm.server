@@ -29,6 +29,8 @@ public class UserAccount extends AbstractEntity {
      */
 	private String password;
 
+    private Boolean accountActivated = false;
+
 	public UserAccount() {
 	}
 
@@ -78,5 +80,13 @@ public class UserAccount extends AbstractEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getAccountActivated() {
+        return accountActivated;
+    }
+
+    public void setAccountActivated(Boolean accountActivated) {
+        this.accountActivated = accountActivated;
     }
 }
