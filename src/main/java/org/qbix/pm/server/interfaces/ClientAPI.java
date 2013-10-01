@@ -1,4 +1,4 @@
-package org.qbix.pm.server.beans;
+package org.qbix.pm.server.interfaces;
 
 import java.util.List;
 import java.util.Map;

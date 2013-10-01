@@ -13,6 +13,7 @@ import javax.ejb.TransactionAttributeType;
 import org.qbix.pm.server.dto.ResultInfo;
 import org.qbix.pm.server.dto.UserJoinDTO;
 import org.qbix.pm.server.exceptions.PMLifecycleException;
+import org.qbix.pm.server.interfaces.GameFacade;
 import org.qbix.pm.server.model.Game;
 import org.qbix.pm.server.model.GameStatus;
 import org.qbix.pm.server.model.PlayerEntry;

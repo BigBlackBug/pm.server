@@ -20,6 +20,8 @@ import org.qbix.pm.server.dto.PlayerEntryDTO;
 import org.qbix.pm.server.dto.ResultInfo;
 import org.qbix.pm.server.dto.UserJoinDTO;
 import org.qbix.pm.server.exceptions.PMException;
+import org.qbix.pm.server.interfaces.ClientAPI;
+import org.qbix.pm.server.interfaces.GameFacade;
 import org.qbix.pm.server.model.Game;
 import org.qbix.pm.server.model.PlayerEntry;
 import org.qbix.pm.server.model.UserAccount;

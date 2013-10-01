@@ -1,4 +1,4 @@
-package org.qbix.pm.server.beans;
+package org.qbix.pm.server.interfaces;
 
 import javax.ejb.Local;
 
