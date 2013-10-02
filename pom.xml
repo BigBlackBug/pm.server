@@ -133,7 +133,7 @@
             <artifactId>yamolib</artifactId>
             <version>1.1.1-SNAPSHOT</version>
             <systemPath>
-                ${basedir}/lib/yamolib-1.1.1-SNAPSHOT.jar
+                ${basedir}/src/main/webapp/WEB-INF/lib/yamolib-1.1.1-SNAPSHOT.jar
             </systemPath>
             <scope>system</scope>
         </dependency>
